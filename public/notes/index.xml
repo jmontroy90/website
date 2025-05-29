@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>notes on John Montroy</title>
+    <link>http://localhost:1313/notes/</link>
+    <description>Recent content in notes on John Montroy</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <copyright>Copyright © 2025, John Montroy.</copyright>
+    <lastBuildDate>Thu, 07 Nov 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/notes/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>13 - Container Runtime Protection</title>
+      <link>http://localhost:1313/notes/container-security/container-security-ch.-13---container-runtime-protection/</link>
+      <pubDate>Thu, 07 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/container-security/container-security-ch.-13---container-runtime-protection/</guid>
+      <description>&lt;p&gt;In order to best protect our service, we can build out a profile in different domains. In a lot of these domains we can observe events via eBPF (another Liz Rice book I might need to read).&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;strong&gt;Network Traffic&lt;/strong&gt;: what does ingress / egress traffic look like? What ports? Do we handle TLS?&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Executable Profiles&lt;/strong&gt;: if we have immutable containers, we should basically have one executable running at any time (unless we shell out).&#xA;&lt;ul&gt;&#xA;&lt;li&gt;We can use &lt;a href=&#34;https://github.com/aquasecurity/tracee&#34;&gt;Tracee&lt;/a&gt; to view executed commands&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;File Access Profiles&lt;/strong&gt;: more eBPF.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;User ID Profiles&lt;/strong&gt;: you don&amp;rsquo;t need anything other than your single app user, right?&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Capabilities&lt;/strong&gt;: use Tracee to see what Linux capabilities are used, then transform that into an AppArmor / &lt;em&gt;seccomp&lt;/em&gt; profile for your container.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;Things like Tracee are for detection - you need fuller systems for prevention. These systems should be able to actually take action when they detect a deviation. Lots of questions on how to run these auto-prevention systems:&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>12 - Passing Secrets to Containers</title>
+      <link>http://localhost:1313/notes/container-security/container-security-ch.-12---passing-secrets-to-containers/</link>
+      <pubDate>Wed, 06 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/container-security/container-security-ch.-12---passing-secrets-to-containers/</guid>
+      <description>&lt;p&gt;We start with a couple of desirable secrets properties for applications:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;strong&gt;Encrypted&lt;/strong&gt;: both in transit and at rest. Decrypted by another secret, preferably only in memory.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Revocable&lt;/strong&gt;: if something / someone is compromised, we need to be able to revoke the secret.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Rotatable&lt;/strong&gt;: forcing humans to change passwords frequently is bad, but machines can handle it.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Restricted&lt;/strong&gt;: minimal access, even for developers of the app in question.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Independent&lt;/strong&gt;: the secret&amp;rsquo;s lifecycle should be independent of the apps that use it.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;What are our options for getting a secret into a container? Here we evaluate each in turn:&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>11 - Certificates &#43; TLS</title>
+      <link>http://localhost:1313/notes/container-security/container-security-ch.-11---certificates-&#43;-tls/</link>
+      <pubDate>Mon, 04 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/container-security/container-security-ch.-11---certificates-&#43;-tls/</guid>
+      <description>&lt;p&gt;HTTPS is HTTP + TLS, which adds security via &lt;a href=&#34;https://en.wikipedia.org/wiki/X.509&#34;&gt;X.509 certificates&lt;/a&gt; at the transport layer. An X.509 certificate identifies its owner and includes a public key associated with that owner. The private key is kept secret, and used by the certificate owner to decrypt communications encrypted by the public key.&lt;/p&gt;&#xA;&lt;p&gt;An X.509 certificate contains four pieces of information:&lt;/p&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;Name of the owner, e.g. subject.&lt;/li&gt;&#xA;&lt;li&gt;Subject&amp;rsquo;s public key (e.g. some key generated via asymmetric algorithms like &lt;a href=&#34;https://en.wikipedia.org/wiki/RSA_(cryptosystem)&#34;&gt;RSA&lt;/a&gt; or &lt;a href=&#34;https://en.wikipedia.org/wiki/EdDSA#Ed25519&#34;&gt;ED25519&lt;/a&gt;)&lt;/li&gt;&#xA;&lt;li&gt;Certificate Authority (CA) that issued the certificate, by name.&lt;/li&gt;&#xA;&lt;li&gt;Expiration date of the certificate.&lt;/li&gt;&#xA;&lt;/ol&gt;&#xA;&lt;p&gt;Certificates are signed by a CA via Certificate Signing Requests (CSRs). Each trusted certificate in a browser is signed by a higher-level certificate, until we get to some root CA certificate that we trust. That root CA certificate is self-signed. All browsers come with root CA certificates.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>10 - Container Network Security</title>
+      <link>http://localhost:1313/notes/container-security/container-security-ch.-10---container-network-security/</link>
+      <pubDate>Mon, 14 Oct 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/container-security/container-security-ch.-10---container-network-security/</guid>
+      <description>&lt;h2 id=&#34;osi-model-again&#34;&gt;OSI Model (again)&lt;/h2&gt;&#xA;&lt;p&gt;Taking the average HTTP packet application, we have:&lt;/p&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;&lt;strong&gt;Layer 1&lt;/strong&gt;: physical (usually) cabling and physical NIC ports.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Layer 2&lt;/strong&gt;: e.g. Ethernet. All interfaces have an ARP address. MAC addresses are resolved to IP addresses via ARP requests, which broadcast to all connected devices to resolve an IP (similar to DNS resolving). ARP requests constantly buzz on a network to keep the ARP cache from going stale.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Layer 3&lt;/strong&gt;: e.g. IP, ICMP. Internet addresses and hops between them. When traversing the broader internet via ISPs (BGP stuff!), data unwraps only to layer 3. No need to futz with higher stuff like ordering via TCP.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Layer 4&lt;/strong&gt;: e.g. TCP, UDP. This is where port numbers get introduced for TCP / UDP. Stateful vs. stateless connections!&#xA;&lt;ol&gt;&#xA;&lt;li&gt;TCP opens with a SYN / ACK exchange that synchronizes sequence numbers between two hosts, which can then be used to maintain packet order. For each message, the sequence number is incremented by the number of bytes found in the data portion of the packet.&lt;/li&gt;&#xA;&lt;li&gt;UDP is stateless - packet order is not guaranteed, and packets can be dropped without warning.&lt;/li&gt;&#xA;&lt;/ol&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Layer 7&lt;/strong&gt;: there&amp;rsquo;s always fuzziness in skipping up to layer 7, but, broadly speaking, this is stuff like HTTP, FTP, telnet, etc. - all plaintext protocols.&lt;/li&gt;&#xA;&lt;/ol&gt;&#xA;&lt;h2 id=&#34;layer-34-routing-and-rules&#34;&gt;Layer 3/4 Routing and Rules&lt;/h2&gt;&#xA;&lt;p&gt;Layer 3 concerns IP hops, but also (via Linux&amp;rsquo;s &lt;em&gt;netfilter&lt;/em&gt; framework) can implement NAT, firewalls, load balancing, ad security policies (e.g. dropping packets). We can also implement &lt;em&gt;netfilter&lt;/em&gt; rules targeting Layer 4 primitives, like port or protocol.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>9 - Breaking Container Isolation</title>
+      <link>http://localhost:1313/notes/container-security/container-security-ch.-9---breaking-container-isolation/</link>
+      <pubDate>Sun, 13 Oct 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/container-security/container-security-ch.-9---breaking-container-isolation/</guid>
+      <description>&lt;p&gt;Here we cover ways that container isolation can be broken, mostly accidentally.&lt;/p&gt;&#xA;&lt;h2 id=&#34;running-as-root&#34;&gt;Running as root&lt;/h2&gt;&#xA;&lt;p&gt;The Docker daemon requires root access - already a concern (also: anyone in the &lt;em&gt;docker&lt;/em&gt; group essentially has root access). But unless otherwise specified, all containers will run as &lt;em&gt;root&lt;/em&gt; inside the container. Processes started as root in the container will appear as root on the host. So if you&amp;rsquo;re able to break out of a container as root, you can do whatever you want. The &lt;em&gt;USER&lt;/em&gt; command in a Dockerfile will set a non-root user, as will the &lt;em&gt;&amp;ndash;user&lt;/em&gt; flag on the &lt;em&gt;docker run&lt;/em&gt; subcommand.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>7 - Software Vulnerability in Images</title>
+      <link>http://localhost:1313/notes/container-security/container-security-ch.-7---software-vulnerability-in-images/</link>
+      <pubDate>Fri, 11 Oct 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/container-security/container-security-ch.-7---software-vulnerability-in-images/</guid>
+      <description>&lt;p&gt;We need to scan for vulnerabilities in our container images. Vulnerabilities are publicly documented with a CVE - &lt;a href=&#34;https://cve.mitre.org/&#34;&gt;Common Vulnerabilities and Exposures&lt;/a&gt; - number, assigned by CNAs (CVE Numbering Authorities). The &lt;a href=&#34;https://nvd.nist.gov/&#34;&gt;National Vulnerabilities Database&lt;/a&gt; (NVD) lists these vulnerabilities for visibility and usage.&lt;/p&gt;&#xA;&lt;p&gt;Traditionally, we scan for vulnerabilities in software by listing out software installed on a host (via the root filesystem + software installed by a package manager like &lt;em&gt;npm&lt;/em&gt; or &lt;em&gt;brew&lt;/em&gt; + manual / adhoc installs via &lt;em&gt;wget&lt;/em&gt; or &lt;em&gt;curl&lt;/em&gt; (not a great idea)). Software can be updated or patched directly on the host.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>6 - Container Images</title>
+      <link>http://localhost:1313/notes/container-security/container-security-ch.-6---container-images/</link>
+      <pubDate>Thu, 10 Oct 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/container-security/container-security-ch.-6---container-images/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;Container images help us create containers.&lt;/strong&gt; They are typically stored in a registry. How we build, store, and retrieve images is crucial for container security.&lt;/p&gt;&#xA;&lt;p&gt;There are two parts to a container image: your root filesystem and your configuration. Per the &lt;a href=&#34;https://opencontainers.org/about/overview/&#34;&gt;OCI standard&lt;/a&gt;, there can also be an image manifest listing sources and dependencies. Tools like &lt;a href=&#34;https://github.com/containers/skopeo&#34;&gt;skopeo&lt;/a&gt; (working with image registries) and &lt;a href=&#34;https://github.com/opencontainers/umoci&#34;&gt;umoci&lt;/a&gt; (creating and interacting with OCI images) all work with the OCI standard, which has been around since 2015. Using umoci, we can see an image&amp;rsquo;s config.json contains very direct data about cgroups and Linux namespaces.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>5 - Virtual Machines</title>
+      <link>http://localhost:1313/notes/container-security/container-security-ch.-5---virtual-machines/</link>
+      <pubDate>Wed, 09 Oct 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/container-security/container-security-ch.-5---virtual-machines/</guid>
+      <description>&lt;p&gt;Virtual machines and Docker containers have different security boundaries. Fundamentally, virtual machines run an ENTIRE operating system including the kernel, whereas Docker containers share the host machine&amp;rsquo;s kernel. We can do a lot to harden up a container, but this distinction will remain.&lt;/p&gt;&#xA;&lt;p&gt;Normally when a server boots, it discovers via &lt;a href=&#34;https://en.wikipedia.org/wiki/BIOS&#34;&gt;BIOS&lt;/a&gt; what resources are available (memory, CPU, network interfaces), boots the kernel, and eventually enters user space. In the VM world, we insert a &lt;a href=&#34;https://en.wikipedia.org/wiki/Hypervisor&#34;&gt;&lt;strong&gt;Virtual Machine Monitor (VMM)&lt;/strong&gt;&lt;/a&gt; before that process, meaning that the VMM discovers physical resources, and then allocates some slice of resources to each guest VM it&amp;rsquo;s hosting. The VMM is responsible for creating and enforcing resource boundaries between its guest VMs. Meanwhile, the guest VM gets to be &amp;ldquo;normal&amp;rdquo;, discovering available resources same as always via BIOS, with no awareness that the VMM has fixed those resources already.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>4 - Container Isolation</title>
+      <link>http://localhost:1313/notes/container-security/container-security-ch.-4---container-isolation/</link>
+      <pubDate>Tue, 08 Oct 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/container-security/container-security-ch.-4---container-isolation/</guid>
+      <description>&lt;p&gt;Container isolation is achieved through a combination of Linux kernel features.&lt;/p&gt;&#xA;&lt;h2 id=&#34;namespaces&#34;&gt;Namespaces&lt;/h2&gt;&#xA;&lt;p&gt;Docker containers are primarily built from two Linux primitives - cgroups (covered last time) and &lt;strong&gt;namespaces&lt;/strong&gt;. Cgroups cover resource management per process - namespaces control what is visible to a process. Since a Docker container is nothing more than a Linux process, we can use namespaces of various types to control visibility of these resources:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Unix Timesharing System (UTS) - basically hostnames and domain names.&lt;/li&gt;&#xA;&lt;li&gt;Process IDs&lt;/li&gt;&#xA;&lt;li&gt;Mount points&lt;/li&gt;&#xA;&lt;li&gt;Network&lt;/li&gt;&#xA;&lt;li&gt;User and group IDs&lt;/li&gt;&#xA;&lt;li&gt;Inter-process communications (IPC)&lt;/li&gt;&#xA;&lt;li&gt;Control groups (cgroups)&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;A process is always in one namespace of each type. We can see this immediately with the &lt;em&gt;lsns&lt;/em&gt; command:&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>3 - Control Groups</title>
+      <link>http://localhost:1313/notes/container-security/container-security-ch.-3---control-groups/</link>
+      <pubDate>Sun, 29 Sep 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/container-security/container-security-ch.-3---control-groups/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;Control groups&lt;/strong&gt;, a.k.a. &lt;strong&gt;cgroups&lt;/strong&gt;, controls the resources that a process or group of processes can use. This includes things like memory, CPU, prioritization, and even number of PIDs. They were introduced into Linux in 2008, and have two major versions. &lt;em&gt;v2&lt;/em&gt; was released around 2015, and is approaching stable adoption.&lt;/p&gt;&#xA;&lt;p&gt;You can see your cgroups in various ways:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;strong&gt;lscgroup&lt;/strong&gt; from the cgroup-tools package - a nice formatted overview&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;ls -la /sys/fs/cgroup&lt;/strong&gt; - the raw files, managed by your system.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;cat /proc/$$/cgroup&lt;/strong&gt; - a given process&amp;rsquo;s cgroups, in this example your current PID&amp;rsquo;s ($$)&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;systemctl status&lt;/strong&gt; - lists lots of nicely-formatted info on processes, including your current user session. The CGroup is prominently listed.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;If you want to see all resources that have cgroup controllers:&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>8 - Strengthening Container Isolation</title>
+      <link>http://localhost:1313/notes/container-security/container-security-ch.-8---strengthening-container-isolation/</link>
+      <pubDate>Sun, 29 Sep 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/container-security/container-security-ch.-8---strengthening-container-isolation/</guid>
+      <description>&lt;p&gt;We examine here &lt;strong&gt;sandboxing&lt;/strong&gt; mechanisms, which isolate applications and restrict what they can do.&lt;/p&gt;&#xA;&lt;h2 id=&#34;seccomp&#34;&gt;seccomp&lt;/h2&gt;&#xA;&lt;p&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Seccomp&#34;&gt;seccomp&lt;/a&gt;, or &amp;ldquo;secure computing mode&amp;rdquo;, was introduced in Linux in 2005 and limited what syscalls could be made. Since 2012, it uses BPF (Berkeley Packet Filter) as &lt;strong&gt;seccomp-bpf&lt;/strong&gt; to create profiles that determine what to do when a given syscall is made. The filter looks at the syscall opcode and parameters, and makes a decision on whether to allow it, or how to trace it, and so on.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>2 - Linux System Calls, Permissions, and Capabilities</title>
+      <link>http://localhost:1313/notes/container-security/container-security-ch.-2---linux-system-calls-permissions-and-capabilities/</link>
+      <pubDate>Sat, 28 Sep 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/container-security/container-security-ch.-2---linux-system-calls-permissions-and-capabilities/</guid>
+      <description>&lt;h3 id=&#34;system-calls&#34;&gt;System Calls&lt;/h3&gt;&#xA;&lt;p&gt;All applications run in user space. Applications can make system calls, which involve interacting with the kernel. Since all containers are applications on one Linux host e.g. one kernel, managing system calls from containers is important. Some example system calls are things like &lt;em&gt;read&lt;/em&gt;, &lt;em&gt;write&lt;/em&gt;, &lt;em&gt;chown&lt;/em&gt;, &lt;em&gt;clone&lt;/em&gt;, &lt;em&gt;execve&lt;/em&gt;. Rarely do we make any system calls directly - in Golang, you might use the &lt;em&gt;glibc&lt;/em&gt; library in the &lt;em&gt;syscall&lt;/em&gt; package, but that&amp;rsquo;s at most.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>1 - Container Security Threats</title>
+      <link>http://localhost:1313/notes/container-security/container-security-ch.-1---container-security-threats/</link>
+      <pubDate>Fri, 27 Sep 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/container-security/container-security-ch.-1---container-security-threats/</guid>
+      <description>&lt;p&gt;(recently finished reading &lt;a href=&#34;https://www.oreilly.com/library/view/container-security/9781492056690/&#34;&gt;Container Security&lt;/a&gt; by Liz Rice; excellent, well-structured read, highly recommended. I&amp;rsquo;ll be posting my notes on it for the next few days.)&lt;/p&gt;&#xA;&lt;p&gt;Docker is not the first isolation mechanism, but its CLI tooling really popularized the technology around 2013. Orchestrators like Kubernetes followed shortly thereafter.&lt;/p&gt;&#xA;&lt;p&gt;Containers are great. They provide isolation, reproducibility, and enable orchestration on a single host. But they also have an attack surface like any environment.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>DSP 14: Analog Filters for Data Conversion</title>
+      <link>http://localhost:1313/notes/dsp/dsp-14-analog-filters-for-data-conversion/</link>
+      <pubDate>Tue, 02 Jan 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/dsp/dsp-14-analog-filters-for-data-conversion/</guid>
+      <description>&lt;ul&gt;&#xA;&lt;li&gt;Covered:&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;https://www.dspguide.com/ch3/4.htm&#34;&gt;Chapter 3: Analog Filters for Data Conversion&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;Key Terms:&#xA;&lt;ul&gt;&#xA;&lt;li&gt;anti-aliasing filter&lt;/li&gt;&#xA;&lt;li&gt;Chebyshev, Butterworth, Bessel&lt;/li&gt;&#xA;&lt;li&gt;Sallen-Key Circuit&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;Questions:&#xA;&lt;ul&gt;&#xA;&lt;li&gt;How the heck does a Sallen-Key Circuit work?&lt;/li&gt;&#xA;&lt;li&gt;What is a switched capacitor filter, exactly?&lt;/li&gt;&#xA;&lt;li&gt;Is &amp;ldquo;anti-aliasing&amp;rdquo; here similar to the graphical antialiasing setting?&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;(Programming note: we&amp;rsquo;re back! Took some time to see Hoi An and Da Nang with a friend. Happy 2024! May your luck be analog and your emotions only as convolved as you desire.)&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>DSP 13: Digital-to-Analog Conversion</title>
+      <link>http://localhost:1313/notes/dsp/dsp-13-digital-to-analog-conversion/</link>
+      <pubDate>Sat, 23 Dec 2023 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/dsp/dsp-13-digital-to-analog-conversion/</guid>
+      <description>&lt;p&gt;Last time we focused on analog-to-digital conversion &amp;ndash; what about digital-to-analog?&lt;/p&gt;&#xA;&lt;p&gt;The easiest way to convert from digital back to analog is by reconstructing it via the impulse train we generate from the original ADC process. Then you do a low-pass filter with the cutoff at the Nyquist frequency (all higher frequencies are artifacts of the sampling process), and that should perfectly reconstruct the original frequency spectrum.&lt;/p&gt;&#xA;&lt;p&gt;This is fine in theory, but difficult in practice - impulse trains are hard to generate. So instead we do a &lt;strong&gt;zeroth-order hold&lt;/strong&gt;, which is the &amp;ldquo;DAC equivalent of the sample-and-hold used during ADC&amp;rdquo;. This hold generates the staircase-looking effect on the impulse train in the time domain, like so:&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>DSP 12: The Sampling Theorem</title>
+      <link>http://localhost:1313/notes/dsp/dsp-12-the-sampling-theorem/</link>
+      <pubDate>Fri, 22 Dec 2023 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/dsp/dsp-12-the-sampling-theorem/</guid>
+      <description>&lt;ul&gt;&#xA;&lt;li&gt;Covered:&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;https://www.dspguide.com/ch3/2.htm&#34;&gt;Chapter 3: The Sampling Theorem&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;Key Terms:&#xA;&lt;ul&gt;&#xA;&lt;li&gt;proper sampling, aliasing&lt;/li&gt;&#xA;&lt;li&gt;Nyquist / Shannon sampling theorem&lt;/li&gt;&#xA;&lt;li&gt;Nyquist frequency / rate&lt;/li&gt;&#xA;&lt;li&gt;impulse train&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;What is &lt;em&gt;proper sampling&lt;/em&gt;? A continuous, analog signal is properly sampled if you can &lt;strong&gt;exactly reconstruct&lt;/strong&gt; the original signal from the samples. But this gets subtle! Three out of the four below are properly sampled because the samples correspond to exactly one original signal, e.g. the sampling has captured enough information to reverse the sampling process. But in (d), the last one, the samples do &lt;strong&gt;not&lt;/strong&gt; represent the original signal, because they can essentially be confused with a different signal! This is called &lt;strong&gt;aliasing&lt;/strong&gt;.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>DSP 11: Quantization</title>
+      <link>http://localhost:1313/notes/dsp/dsp-11-quantization/</link>
+      <pubDate>Wed, 20 Dec 2023 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/dsp/dsp-11-quantization/</guid>
+      <description>&lt;ul&gt;&#xA;&lt;li&gt;Covered:&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;https://www.dspguide.com/ch3/1.htm&#34;&gt;Chapter 3: Quantization&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;Key Terms:&#xA;&lt;ul&gt;&#xA;&lt;li&gt;sampling, sample-and-hold&lt;/li&gt;&#xA;&lt;li&gt;quantization, analog-to-digital&lt;/li&gt;&#xA;&lt;li&gt;LSB&lt;/li&gt;&#xA;&lt;li&gt;dithering&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;We need to convert a signal from analog to digital, e.g. continuous to discrete. That means making both the independent and dependent variables discrete:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;We make the independent variable (e.g. time) discrete via a &lt;strong&gt;sample-and-hold&lt;/strong&gt; device, which samples and holds voltage steady at given points at time, like taking a snapshot at intervals. This is called &lt;strong&gt;sampling&lt;/strong&gt;.&lt;/li&gt;&#xA;&lt;li&gt;We make the dependent variable (e.g. voltage) discrete via an ADC, e.g. &lt;strong&gt;analog-to-digital converter&lt;/strong&gt;. It essentially rounds each snapshotted voltage to a given level, e.g. quantizing it based on the number of bits used in your ADC - your bit depth. This is called &lt;strong&gt;quantization&lt;/strong&gt;.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;Quantization incurs error in its rounding-off process, with a max of ±0.5 least significant bit (&lt;strong&gt;LSB&lt;/strong&gt;), which is fancy jargon for &amp;ldquo;the distance between quantization levels&amp;rdquo;, or just the step size (0.5 because if you go beyond that point from a level, you&amp;rsquo;ll&amp;hellip;just be rounded up to the next level). We can measure things in terms of LSB as a sort of unit.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>DSP 10: Precision and Accuracy</title>
+      <link>http://localhost:1313/notes/dsp/dsp-10-precision-and-accuracy/</link>
+      <pubDate>Tue, 19 Dec 2023 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/dsp/dsp-10-precision-and-accuracy/</guid>
+      <description>&lt;p&gt;Covered: &lt;a href=&#34;https://www.dspguide.com/ch2/7.htm&#34;&gt;Chapter 2: &lt;/a&gt;Precision and Accuracy&lt;/p&gt;&#xA;&lt;p&gt;This is simpler. When you measure something repeatedly, you get a histogram or PMF. This PMF can be described by its precision and accuracy.&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;strong&gt;Precision&lt;/strong&gt; is captured by the standard deviation of that PMF - how well do individual sample points agree with one another? Are you fluctuating wildly per measurement, or are your measurements agreeing with each other? Low precision usually comes about because of noise, and precision is always improved by more measurements.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Accuracy&lt;/strong&gt; is how far off your mean is from the true value of whatever you&amp;rsquo;re measuring. So you might be very precise, but not accurate - that would mean, for example, that you measure 90 every single time, precisely, but your true value is 100. So your mean is far off from the real value. Which obviously requires you to know your real value in advance. Accuracy is usually more a systematic or calibration error, and doesn&amp;rsquo;t improve with more measurements.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;&lt;img src=&#34;004b14_7e4f8ed29a9b4f229f1333abf3ac06b8~mv2.png&#34; alt=&#34;Precision and Accuracy&#34;&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>DSP 9: Digital Noise Generation</title>
+      <link>http://localhost:1313/notes/dsp/dsp-9-digital-noise-generation/</link>
+      <pubDate>Mon, 18 Dec 2023 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/dsp/dsp-9-digital-noise-generation/</guid>
+      <description>&lt;p&gt;(Note: this fell off - I was just having too much fun in Korea, then Thailand! But now I&amp;rsquo;m back in Hoi An, Vietnam, and feeling good to get back to this.)&lt;/p&gt;&#xA;&lt;p&gt;Covered:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;https://www.dspguide.com/ch2/6.htm&#34;&gt;Chapter 2: Digital Noise Generation&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;We often need to generate digital noise, which is a random signal that follows the Gaussian PDF. This noise is used to ensure that devices, signals, and algorithms work given the presence of random noise.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>DSP 7: The Histogram, Pmf, and Pdf</title>
+      <link>http://localhost:1313/notes/dsp/dsp-7-the-histogram-pmf-and-pdf/</link>
+      <pubDate>Thu, 12 Oct 2023 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/dsp/dsp-7-the-histogram-pmf-and-pdf/</guid>
+      <description>&lt;p&gt;Covered:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;https://www.dspguide.com/ch2/4.htm&#34;&gt;Chapter 2: The Histogram, Pmf, and Pdf&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;Histograms show how many times a given value has appeared. This has the effect of &lt;em&gt;batching&lt;/em&gt;, and makes computing statistics a lot easier. So like, mean and standard deviation become:&lt;/p&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://static.wixstatic.com/media/004b14_745a186db1314c8e982aee59756b8b87~mv2.png&#34; alt=&#34;Mean formula&#34;&gt;&lt;/p&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://static.wixstatic.com/media/004b14_1cffd0723e034f12ae7b344294fdbb94~mv2.png&#34; alt=&#34;Standard deviation formula&#34;&gt;&lt;/p&gt;&#xA;&lt;p&gt;Here, &lt;em&gt;H_i&lt;/em&gt; is the number of values that have the given value &lt;em&gt;i&lt;/em&gt;, so like if 100 sample points had a value of 50, &lt;em&gt;H_50&lt;/em&gt; == 100.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>DSP 8: The Normal Distribution</title>
+      <link>http://localhost:1313/notes/dsp/dsp-8-the-normal-distribution/</link>
+      <pubDate>Thu, 12 Oct 2023 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/dsp/dsp-8-the-normal-distribution/</guid>
+      <description>&lt;p&gt;Covered:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;https://www.dspguide.com/ch2/5.htm&#34;&gt;Chapter 2: The Normal Distribution&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;Random noise generates the Normal distribution as its PDF - this was first discovered and termed by Gauss, so it&amp;rsquo;s the Gaussian curve:&lt;/p&gt;&#xA;&lt;p&gt;&lt;img src=&#34;004b14_03f4c8d3a9b64adcb39e010541dd09b3~mv2.png&#34; alt=&#34;Normal Distribution&#34;&gt;&lt;/p&gt;&#xA;&lt;p&gt;The standard deviation determines the width of the bell, and the mean says where the curve is centered. Like all PDFs, it&amp;rsquo;s normalized s.t. its integral is one.&lt;/p&gt;&#xA;&lt;p&gt;The integral of a PDF over its domain is known as its &lt;strong&gt;cumulative distribution function (CDF)&lt;/strong&gt;. The CDF of the Gaussian is hugely important, but the Gaussian cannot be integrated through analytical means, instead only yielding to numerical integration where we essentially chop up and sample the the curve and integrate slowly.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>DST 6: Signal vs. Underlying Process</title>
+      <link>http://localhost:1313/notes/dsp/dsp-6-signal-vs.-underlying-process/</link>
+      <pubDate>Sun, 08 Oct 2023 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/dsp/dsp-6-signal-vs.-underlying-process/</guid>
+      <description>&lt;p&gt;Big chunk today! Did a bunch of extra research on basic descriptive statistics I&amp;rsquo;ve forgotten over the years. Banner image credit to &lt;a href=&#34;https://www.youtube.com/@nstatum8290&#34;&gt;NStatum&lt;/a&gt;.&lt;/p&gt;&#xA;&lt;p&gt;Covered:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;https://www.dspguide.com/ch2/3.htm&#34;&gt;Chapter 2: Signal vs. Underlying Process&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;https://www.youtube.com/watch?v=ycuPP72_DVU&#34;&gt;The Law of Large Numbers - Explained&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;https://www.youtube.com/watch?v=wpY9o_OyxoQ&#34;&gt;Variance and Standard Deviation: Why divide by n-1?&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;A coin flip as a process has a mean vale of 0.5, where 0 is tails and 1 is heads. But if you flip a coin 1000 times, your mean will not be 0.5. Make sure you understand this difference: &lt;strong&gt;statistics of an actual signal vs. statistics of the underlying process.&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>DST 5: Mean and Standard Deviation</title>
+      <link>http://localhost:1313/notes/dsp/dsp-5-mean-and-standard-deviation/</link>
+      <pubDate>Tue, 03 Oct 2023 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/dsp/dsp-5-mean-and-standard-deviation/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;μ&lt;/strong&gt; is mean. It&amp;rsquo;s calculated as ever:&lt;/p&gt;&#xA;&lt;p&gt;&lt;img src=&#34;004b14_1ab34e704bdd4d979354bc8429cd8e73~mv2.png&#34; alt=&#34;Mean formula&#34;&gt;&lt;/p&gt;&#xA;&lt;blockquote&gt;&#xA;&lt;p&gt;In electronics, the mean is commonly called the DC (direct current) value. Likewise, AC (alternating current) refers to how the signal fluctuates around the mean value. If the signal is a simple repetitive waveform, such as a sine or square wave, its excursions can be described by its peak-to-peak amplitude.&lt;/p&gt;&lt;/blockquote&gt;&#xA;&lt;p&gt;So basic signals can be analyzed with things like the mean, but most signals are complex. For this, we bring in the &lt;em&gt;standard deviation&lt;/em&gt;, denoted by &lt;strong&gt;σ&lt;/strong&gt;. The &lt;em&gt;average deviation&lt;/em&gt; is calculated simply, with just summing absolute values of differences from the mean. But the standard deviation squares things, because we&amp;rsquo;re more interested in signal power - &lt;strong&gt;P ∝ V^2&lt;/strong&gt; - so we get:&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>DSP 4: Signal and Graph Terminology</title>
+      <link>http://localhost:1313/notes/dsp/dsp-4-signal-and-graph-terminology/</link>
+      <pubDate>Mon, 02 Oct 2023 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/dsp/dsp-4-signal-and-graph-terminology/</guid>
+      <description>&lt;p&gt;(note: today&amp;rsquo;s DALL-E prompt was &amp;ldquo;graph with creepy smile in it&amp;rdquo;, I&amp;rsquo;d say mission accomplished)&lt;/p&gt;&#xA;&lt;p&gt;Covered: &lt;a href=&#34;https://www.dspguide.com/ch2/1.htm&#34;&gt;Chapter 2: S&lt;/a&gt;ignal and Graph Terminology&lt;/p&gt;&#xA;&lt;p&gt;Signals display how one parameter depends on another, e.g. voltage over time, density over distance. These parameters can be continuous, e.g. smooth, or discrete / digital, e.g. quantized. Analog signals from nature, like amplitude over time, are quantized by analog-to-digital convertors, e.g. ADCs. These have their sampling rates and bit depths to help. When working with signals, usually both are discrete / digital, or both are continuous.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>DSP 3: Image Processing</title>
+      <link>http://localhost:1313/notes/dsp/dsp-3-image-processing/</link>
+      <pubDate>Fri, 29 Sep 2023 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/dsp/dsp-3-image-processing/</guid>
+      <description>&lt;p&gt;Covered:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;https://www.dspguide.com/ch1/5.htm&#34;&gt;Chapter 1: Image Processing&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;Images are fun signals - they can be signals over both time AND space, which makes them typically much bigger.&lt;/p&gt;&#xA;&lt;p&gt;The original &lt;strong&gt;CT (Computed Tomography)&lt;/strong&gt; scanner is an example of DSP done well. A single x-ray might not resolve everything you need - organs might be blocked, it&amp;rsquo;s a static image, can&amp;rsquo;t differentiate two similar organs - but if you do several x-rays at different angles, you can use DSP to essentially construct slices of a human, which allows you to resolve and probe more closely. This requires DSP, and was a huge boon!&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>DSP 2: Echo Location</title>
+      <link>http://localhost:1313/notes/dsp/dsp-2-echo-location/</link>
+      <pubDate>Wed, 27 Sep 2023 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/dsp/dsp-2-echo-location/</guid>
+      <description>&lt;p&gt;Three applications for DSP involving echo location:&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;Radar&lt;/strong&gt; (RAdio Detection And Ranging): works by firing a pulse of radio waves at an area you want to investigate. If something&amp;rsquo;s there, it&amp;rsquo;ll reflect the radio wave back to you.&lt;/p&gt;&#xA;&lt;p&gt;The longer the pulse, the more energy you have, but the less accurate you are. DSP helps here in a couple of ways: return signal compression, filtering noise, and pulse selection and generation. All of this is further aided by samplers that work on the order of megahertz, which is impressive!&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Digital Signal Processing: read-through</title>
+      <link>http://localhost:1313/notes/dsp/digital-signal-processing-read-through/</link>
+      <pubDate>Mon, 25 Sep 2023 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/dsp/digital-signal-processing-read-through/</guid>
+      <description>&lt;p&gt;A big goal of my 30s, intellectually / educationally speaking, is to finally marry my two great passions in life - music and technology. Despite the obvious synergies between the two, I&amp;rsquo;ve never combined them much beyond a startling command of Finale during college, or passing interests in phenomena like &lt;a href=&#34;https://www.physicsclassroom.com/class/sound/Lesson-3/Interference-and-Beats&#34;&gt;beats&lt;/a&gt; and genres like &lt;a href=&#34;https://en.wikipedia.org/wiki/Spectral_music&#34;&gt;spectralism&lt;/a&gt;. So it&amp;rsquo;s high time we put them together and see what shakes out.&lt;/p&gt;&#xA;&lt;p&gt;A lot of this effort will be in tools like Ableton and (hello again) Finale, as I try to write and compose. Some of it might be in AI, using LLMs trained for producing sounds (Mr. Bill has some real interesting examples of this). But academically, it&amp;rsquo;s gonna be digital signal processing. And lucky me - there&amp;rsquo;s a book online for just that! &lt;a href=&#34;https://www.dspguide.com/&#34;&gt;The Scientist and Engineer&amp;rsquo;s Guide to Digital Signal Processing by Steven W. Smith&lt;/a&gt; - 600+ pages on all things DSP. I&amp;rsquo;ve read a bit - it&amp;rsquo;s technical, but not insanely so. And seems quite thorough; a whole chapter on linear systems is generous!&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>DSP 1: Roots and Telecommunications</title>
+      <link>http://localhost:1313/notes/dsp/dsp-1-roots-and-telecommunications/</link>
+      <pubDate>Mon, 25 Sep 2023 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/dsp/dsp-1-roots-and-telecommunications/</guid>
+      <description>&lt;p&gt;&lt;em&gt;(blog images will always be generated by some LLM or another, today Stable Diffusion)&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;Covered:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;_Chapter 1: _&lt;a href=&#34;https://www.dspguide.com/ch1/1.htm&#34;&gt;The Roots of DSP&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;_Chapter 1: _&lt;a href=&#34;https://www.dspguide.com/ch1/2.htm&#34;&gt;Telecommunications&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;Digital Signal Processing answers the question: “What do I do with all these data I just converted from analog to digital?” That can include a huge array of disciplines and industries. DSP used to be very specialized, to oil discovery or space exploration, but once personal computers hit the scene in the 80s, everyone had access to DSP. DSP is one of those fields like electronics - in today&amp;rsquo;s world, everyone working in science or engineering probably should know at least a little bit about it!&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

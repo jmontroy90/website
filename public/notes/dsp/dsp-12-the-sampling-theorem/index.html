@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="shortcut icon" href="http://localhost:1313/images/favicon.png" />
+<title>DSP 12: The Sampling Theorem | John Montroy</title>
+<meta name="title" content="DSP 12: The Sampling Theorem" />
+<meta name="description" content="
+Covered:
+
+Chapter 3: The Sampling Theorem
+
+
+Key Terms:
+
+proper sampling, aliasing
+Nyquist / Shannon sampling theorem
+Nyquist frequency / rate
+impulse train
+
+
+
+What is proper sampling? A continuous, analog signal is properly sampled if you can exactly reconstruct the original signal from the samples. But this gets subtle! Three out of the four below are properly sampled because the samples correspond to exactly one original signal, e.g. the sampling has captured enough information to reverse the sampling process. But in (d), the last one, the samples do not represent the original signal, because they can essentially be confused with a different signal! This is called aliasing." />
+<meta name="keywords" content="dsp," />
+
+
+<meta property="og:url" content="http://localhost:1313/notes/dsp/dsp-12-the-sampling-theorem/">
+  <meta property="og:site_name" content="John Montroy">
+  <meta property="og:title" content="DSP 12: The Sampling Theorem">
+  <meta property="og:description" content="Covered: Chapter 3: The Sampling Theorem Key Terms: proper sampling, aliasing Nyquist / Shannon sampling theorem Nyquist frequency / rate impulse train What is proper sampling? A continuous, analog signal is properly sampled if you can exactly reconstruct the original signal from the samples. But this gets subtle! Three out of the four below are properly sampled because the samples correspond to exactly one original signal, e.g. the sampling has captured enough information to reverse the sampling process. But in (d), the last one, the samples do not represent the original signal, because they can essentially be confused with a different signal! This is called aliasing.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="notes">
+    <meta property="article:published_time" content="2023-12-22T00:00:00+00:00">
+    <meta property="article:modified_time" content="2023-12-22T00:00:00+00:00">
+    <meta property="article:tag" content="Dsp">
+    <meta property="og:image" content="http://localhost:1313/images/share.png">
+
+
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://localhost:1313/images/share.png">
+  <meta name="twitter:title" content="DSP 12: The Sampling Theorem">
+  <meta name="twitter:description" content="Covered: Chapter 3: The Sampling Theorem Key Terms: proper sampling, aliasing Nyquist / Shannon sampling theorem Nyquist frequency / rate impulse train What is proper sampling? A continuous, analog signal is properly sampled if you can exactly reconstruct the original signal from the samples. But this gets subtle! Three out of the four below are properly sampled because the samples correspond to exactly one original signal, e.g. the sampling has captured enough information to reverse the sampling process. But in (d), the last one, the samples do not represent the original signal, because they can essentially be confused with a different signal! This is called aliasing.">
+
+
+
+
+  <meta itemprop="name" content="DSP 12: The Sampling Theorem">
+  <meta itemprop="description" content="Covered: Chapter 3: The Sampling Theorem Key Terms: proper sampling, aliasing Nyquist / Shannon sampling theorem Nyquist frequency / rate impulse train What is proper sampling? A continuous, analog signal is properly sampled if you can exactly reconstruct the original signal from the samples. But this gets subtle! Three out of the four below are properly sampled because the samples correspond to exactly one original signal, e.g. the sampling has captured enough information to reverse the sampling process. But in (d), the last one, the samples do not represent the original signal, because they can essentially be confused with a different signal! This is called aliasing.">
+  <meta itemprop="datePublished" content="2023-12-22T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2023-12-22T00:00:00+00:00">
+  <meta itemprop="wordCount" content="497">
+  <meta itemprop="image" content="http://localhost:1313/images/share.png">
+  <meta itemprop="keywords" content="Dsp">
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+    --width: 720px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --code-background-color: #f2f2f2;
+    --code-color: #222;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --code-background-color: #000;
+      --code-color: #ddd;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  time {
+    font-family: monospace;
+    font-style: normal;
+    font-size: 15px;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+</style>
+
+</head>
+
+<body>
+  <header><a href="/" class="title">
+  <h2>John Montroy</h2>
+</a>
+<nav>
+<a href="/">home</a>
+
+<a href="/blog/">blog</a>
+
+<a href="/music/">music</a>
+
+<a href="/notes/">notes</a>
+
+</nav>
+</header>
+  <main>
+
+<content>
+  <ul>
+<li>Covered:
+<ul>
+<li><a href="https://www.dspguide.com/ch3/2.htm">Chapter 3: The Sampling Theorem</a></li>
+</ul>
+</li>
+<li>Key Terms:
+<ul>
+<li>proper sampling, aliasing</li>
+<li>Nyquist / Shannon sampling theorem</li>
+<li>Nyquist frequency / rate</li>
+<li>impulse train</li>
+</ul>
+</li>
+</ul>
+<p>What is <em>proper sampling</em>? A continuous, analog signal is properly sampled if you can <strong>exactly reconstruct</strong> the original signal from the samples. But this gets subtle! Three out of the four below are properly sampled because the samples correspond to exactly one original signal, e.g. the sampling has captured enough information to reverse the sampling process. But in (d), the last one, the samples do <strong>not</strong> represent the original signal, because they can essentially be confused with a different signal! This is called <strong>aliasing</strong>.</p>
+<p><img src="https://static.wixstatic.com/media/004b14_ce3e48fc001b4fbfaa3e5e34ff28e70f~mv2.png" alt="Proper sampling examples"></p>
+<p>This gets at a big DSP theorem, the <strong>sampling theorem</strong>, also known as the Shannon sampling theorem or Nyquist sampling theorem. It says the following:</p>
+<blockquote>
+<p>&hellip;a continuous signal can be properly sampled, only if it does not contain frequency components above one-half of the sampling rate. For instance, a sampling rate of 2,000 samples/second requires the analog signal to be composed of frequencies below 1000 cycles/second.</p></blockquote>
+<p>This basically reflects the aliasing problem - you don&rsquo;t want your samples to accidentally hide (alias!) some faster signals! This is part of why our basic sampling rate is at 44100Hz (in addition to historical / technical constraints) - the threshold of human hearing is around 20kHz.</p>
+<p>You&rsquo;ll hear the terms <strong>Nyquist frequency</strong> / <strong>Nyquist rate</strong> referred to, but they&rsquo;re not well defined. This book chooses to define them as <em>one-half the sampling rate</em>, which is the frequency that the original signal must not contain frequencies above.</p>
+<p>Aliasing will turn higher frequencies into lower ones, meaning you lose information about both the higher AND lower frequencies. If you have a sampled frequency at 3000Hz from an improperly sampled signal (e.g. Nyquist rate &lt; 6kHz or analog signal contains high frequencies), that frequency might&rsquo;ve come from an aliased frequency at 9kHz, 12kHz, 18kHz, who knows! So you lose the original high, and create an artificial low. Even worse - aliasing can create phase shifts too, depending on the relationship between the Nyquist rate and the original signal!</p>
+<p>How do we actually sample? We use the theoretical concept of an <strong>impulse train</strong> to get at it, where we have a continuous signal whose amplitude is zero except at sampling points, when it spikes to match the amplitude of the analog signal.</p>
+<p>This sampling process generates a frequency spectrum that matches the original when properly sampled, but it also generates <strong>upper and lower sidebands</strong> at whole number intervals to the sampling frequency. We can remove these with a low-pass filter, so the sampling is still proper despite frequency duplication. When we improperly sample, these sideband frequencies actually overlap, making it impossible to determine the actual original frequencies:</p>
+<p><img src="https://static.wixstatic.com/media/004b14_7f8e92806a484353a207f0b1a520ce1c~mv2.png" alt="Sideband frequencies"></p>
+<p>Why do these sidebands get generated? It has something to do with convolutions and two time domain signals (the original + the impulse train) being convolved. But this is beyond my current understanding and will be explained more in later chapters.</p>
+
+</content>
+<p>
+  
+  <a href="http://localhost:1313/blog/dsp/">#Dsp</a>
+  
+</p>
+
+  </main>
+  <footer>
+</footer>
+
+  
+</body>
+
+</html>

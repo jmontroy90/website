@@ -1,0 +1,111 @@
+{{ define "main" }}
+<content>
+  <h1>{{ .Title }}</h1>
+
+  <blockquote>
+    <p>An assortment of notes I've taken over the years (not quite ready to just share my obsidian notebook)</p>
+  </blockquote>
+
+  <!-- Group pages by their first directory level -->
+  {{ $sections := dict }}
+  {{ range .Pages }}
+    {{ $path := split .File.Dir "/notes" }}
+    {{ $section := index $path 0 }}
+    {{ if $section }}
+      {{ $pages := index $sections $section | default slice }}
+      {{ $sections = merge $sections (dict $section ($pages | append .)) }}
+    {{ end }}
+  {{ end }}
+
+  <!-- Display sections as collapsible dropdowns -->
+  {{ range $section, $pages := $sections }}
+    {{ if $section }}
+      <div class="section-container">
+          <details>
+            <summary>
+              <span style="margin-left: 0.3em">{{ $section | strings.TrimPrefix "notes/" | strings.TrimPrefix "Notes/" | humanize | lower }}</span>
+            </summary>
+            <ul class="note-list">
+              {{ range $pages.ByDate.Reverse }}
+                <li>
+                  <span>
+                    <i>
+                      <time datetime='{{ .Date.Format "2006-01-02" }}'>
+                        {{ .Date.Format "2006-01-02" }}
+                      </time>
+                    </i>
+                  </span>
+                  <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+                </li>
+              {{ end }}
+            </ul>
+          </details>
+      </div>
+    {{ end }}
+  {{ end }}
+
+  <!-- Display pages in root directory -->
+  {{ range .Pages }}
+    {{ if not .File.Dir }}
+      <div class="note-item">
+        <span>
+          <i>
+            <time datetime='{{ .Date.Format "2006-01-02" }}'>
+              {{ .Date.Format "2006-01-02" }}
+            </time>
+          </i>
+        </span>
+        <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+      </div>
+    {{ end }}
+  {{ end }}
+</content>
+
+<style>
+  .section-container {
+    margin: 0.2em 0;
+  }
+  details {
+    margin-bottom: 0.2em;
+    margin-left: 1em;
+  }
+  summary {
+    cursor: pointer;
+    margin-bottom: 0.2em;
+    user-select: none;
+    margin-left: 1.5em;
+  }
+  summary:hover {
+    color: #666;
+  }
+  summary::marker {
+    margin-left: 2em;
+  }
+  .note-list {
+    list-style: none;
+    padding-left: 2em;
+    margin: 0.5em 0;
+  }
+  .note-list li {
+    margin: 0.5em 0;
+  }
+  .note-list time {
+    margin-right: 1em;
+    color: #666;
+  }
+  .note-item {
+    margin: 0.5em 0;
+  }
+  .note-item time {
+    margin-right: 1em;
+    color: #666;
+  }
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+</style>
+{{ end }} 

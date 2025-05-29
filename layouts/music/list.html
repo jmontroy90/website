@@ -1,0 +1,66 @@
+{{ define "main" }}
+{{ .Content }}
+
+<div class="music-container">
+  {{ range .Pages.ByDate.Reverse }}
+    <article class="music-entry">
+      <div class="music-content">
+        <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+        {{ if .Date }}
+          <time>{{ .Date.Format "January 2, 2006" }}</time>
+        {{ end }}
+        {{ if .Description }}
+          <p class="description">{{ .Description }}</p>
+        {{ end }}
+        {{ if .Params.genre }}
+          <div class="genre">Genre: {{ .Params.genre }}</div>
+        {{ end }}
+      </div>
+      {{ if .Params.embed }}
+        <div class="music-embed">
+          {{ .Params.embed | safeHTML }}
+        </div>
+      {{ end }}
+    </article>
+  {{ end }}
+</div>
+
+<style>
+  .music-container {
+    margin-top: 2rem;
+  }
+  .music-entry {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #eee;
+    display: grid;
+    gap: 2rem;
+  }
+  @media (min-width: 768px) {
+    .music-entry {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .music-entry:last-child {
+    border-bottom: none;
+  }
+  .music-content h2 {
+    margin-bottom: 0.5rem;
+  }
+  .music-content time {
+    color: #666;
+    font-size: 0.9rem;
+  }
+  .description {
+    margin-top: 0.5rem;
+  }
+  .genre {
+    margin-top: 0.5rem;
+    font-style: italic;
+  }
+  .music-embed {
+    width: 100%;
+    min-height: 300px;
+  }
+</style>
+{{ end }} 

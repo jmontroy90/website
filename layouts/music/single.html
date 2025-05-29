@@ -1,0 +1,70 @@
+{{ define "main" }}
+<article class="music-piece">
+  <header>
+    <h1>{{ .Title }}</h1>
+    {{ if .Date }}
+      <time>{{ .Date.Format "January 2, 2006" }}</time>
+    {{ end }}
+    {{ if .Params.genre }}
+      <div class="genre">Genre: {{ .Params.genre }}</div>
+    {{ end }}
+  </header>
+
+  {{ if .Params.embed }}
+    <div class="music-embed">
+      {{ .Params.embed | safeHTML }}
+    </div>
+  {{ end }}
+
+  <div class="content">
+    {{ .Content }}
+  </div>
+
+  <footer>
+    {{ if .PrevInSection }}
+      <a class="prev" href="{{ .PrevInSection.RelPermalink }}">&larr; {{ .PrevInSection.Title }}</a>
+    {{ end }}
+    {{ if .NextInSection }}
+      <a class="next" href="{{ .NextInSection.RelPermalink }}">{{ .NextInSection.Title }} &rarr;</a>
+    {{ end }}
+  </footer>
+</article>
+
+<style>
+  .music-piece {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  .music-piece header {
+    margin-bottom: 2rem;
+  }
+  .music-piece time {
+    color: #666;
+    font-size: 0.9rem;
+    display: block;
+    margin-top: 0.5rem;
+  }
+  .genre {
+    margin-top: 0.5rem;
+    font-style: italic;
+  }
+  .music-embed {
+    margin: 2rem 0;
+    width: 100%;
+    min-height: 300px;
+  }
+  .content {
+    line-height: 1.6;
+  }
+  footer {
+    margin-top: 3rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+  }
+  .prev, .next {
+    max-width: 45%;
+  }
+</style>
+{{ end }} 

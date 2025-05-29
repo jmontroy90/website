@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Container-Security on John Montroy</title>
+    <link>http://localhost:1313/blog/container-security/</link>
+    <description>Recent content in Container-Security on John Montroy</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <copyright>Copyright © 2025, John Montroy.</copyright>
+    <lastBuildDate>Thu, 07 Nov 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/blog/container-security/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>13 - Container Runtime Protection</title>
+      <link>http://localhost:1313/notes/container-security/container-security-ch.-13---container-runtime-protection/</link>
+      <pubDate>Thu, 07 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/container-security/container-security-ch.-13---container-runtime-protection/</guid>
+      <description>&lt;p&gt;In order to best protect our service, we can build out a profile in different domains. In a lot of these domains we can observe events via eBPF (another Liz Rice book I might need to read).&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;strong&gt;Network Traffic&lt;/strong&gt;: what does ingress / egress traffic look like? What ports? Do we handle TLS?&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Executable Profiles&lt;/strong&gt;: if we have immutable containers, we should basically have one executable running at any time (unless we shell out).&#xA;&lt;ul&gt;&#xA;&lt;li&gt;We can use &lt;a href=&#34;https://github.com/aquasecurity/tracee&#34;&gt;Tracee&lt;/a&gt; to view executed commands&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;File Access Profiles&lt;/strong&gt;: more eBPF.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;User ID Profiles&lt;/strong&gt;: you don&amp;rsquo;t need anything other than your single app user, right?&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Capabilities&lt;/strong&gt;: use Tracee to see what Linux capabilities are used, then transform that into an AppArmor / &lt;em&gt;seccomp&lt;/em&gt; profile for your container.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;Things like Tracee are for detection - you need fuller systems for prevention. These systems should be able to actually take action when they detect a deviation. Lots of questions on how to run these auto-prevention systems:&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>12 - Passing Secrets to Containers</title>
+      <link>http://localhost:1313/notes/container-security/container-security-ch.-12---passing-secrets-to-containers/</link>
+      <pubDate>Wed, 06 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/container-security/container-security-ch.-12---passing-secrets-to-containers/</guid>
+      <description>&lt;p&gt;We start with a couple of desirable secrets properties for applications:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;strong&gt;Encrypted&lt;/strong&gt;: both in transit and at rest. Decrypted by another secret, preferably only in memory.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Revocable&lt;/strong&gt;: if something / someone is compromised, we need to be able to revoke the secret.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Rotatable&lt;/strong&gt;: forcing humans to change passwords frequently is bad, but machines can handle it.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Restricted&lt;/strong&gt;: minimal access, even for developers of the app in question.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Independent&lt;/strong&gt;: the secret&amp;rsquo;s lifecycle should be independent of the apps that use it.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;What are our options for getting a secret into a container? Here we evaluate each in turn:&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>11 - Certificates &#43; TLS</title>
+      <link>http://localhost:1313/notes/container-security/container-security-ch.-11---certificates-&#43;-tls/</link>
+      <pubDate>Mon, 04 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/container-security/container-security-ch.-11---certificates-&#43;-tls/</guid>
+      <description>&lt;p&gt;HTTPS is HTTP + TLS, which adds security via &lt;a href=&#34;https://en.wikipedia.org/wiki/X.509&#34;&gt;X.509 certificates&lt;/a&gt; at the transport layer. An X.509 certificate identifies its owner and includes a public key associated with that owner. The private key is kept secret, and used by the certificate owner to decrypt communications encrypted by the public key.&lt;/p&gt;&#xA;&lt;p&gt;An X.509 certificate contains four pieces of information:&lt;/p&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;Name of the owner, e.g. subject.&lt;/li&gt;&#xA;&lt;li&gt;Subject&amp;rsquo;s public key (e.g. some key generated via asymmetric algorithms like &lt;a href=&#34;https://en.wikipedia.org/wiki/RSA_(cryptosystem)&#34;&gt;RSA&lt;/a&gt; or &lt;a href=&#34;https://en.wikipedia.org/wiki/EdDSA#Ed25519&#34;&gt;ED25519&lt;/a&gt;)&lt;/li&gt;&#xA;&lt;li&gt;Certificate Authority (CA) that issued the certificate, by name.&lt;/li&gt;&#xA;&lt;li&gt;Expiration date of the certificate.&lt;/li&gt;&#xA;&lt;/ol&gt;&#xA;&lt;p&gt;Certificates are signed by a CA via Certificate Signing Requests (CSRs). Each trusted certificate in a browser is signed by a higher-level certificate, until we get to some root CA certificate that we trust. That root CA certificate is self-signed. All browsers come with root CA certificates.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>10 - Container Network Security</title>
+      <link>http://localhost:1313/notes/container-security/container-security-ch.-10---container-network-security/</link>
+      <pubDate>Mon, 14 Oct 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/container-security/container-security-ch.-10---container-network-security/</guid>
+      <description>&lt;h2 id=&#34;osi-model-again&#34;&gt;OSI Model (again)&lt;/h2&gt;&#xA;&lt;p&gt;Taking the average HTTP packet application, we have:&lt;/p&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;&lt;strong&gt;Layer 1&lt;/strong&gt;: physical (usually) cabling and physical NIC ports.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Layer 2&lt;/strong&gt;: e.g. Ethernet. All interfaces have an ARP address. MAC addresses are resolved to IP addresses via ARP requests, which broadcast to all connected devices to resolve an IP (similar to DNS resolving). ARP requests constantly buzz on a network to keep the ARP cache from going stale.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Layer 3&lt;/strong&gt;: e.g. IP, ICMP. Internet addresses and hops between them. When traversing the broader internet via ISPs (BGP stuff!), data unwraps only to layer 3. No need to futz with higher stuff like ordering via TCP.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Layer 4&lt;/strong&gt;: e.g. TCP, UDP. This is where port numbers get introduced for TCP / UDP. Stateful vs. stateless connections!&#xA;&lt;ol&gt;&#xA;&lt;li&gt;TCP opens with a SYN / ACK exchange that synchronizes sequence numbers between two hosts, which can then be used to maintain packet order. For each message, the sequence number is incremented by the number of bytes found in the data portion of the packet.&lt;/li&gt;&#xA;&lt;li&gt;UDP is stateless - packet order is not guaranteed, and packets can be dropped without warning.&lt;/li&gt;&#xA;&lt;/ol&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Layer 7&lt;/strong&gt;: there&amp;rsquo;s always fuzziness in skipping up to layer 7, but, broadly speaking, this is stuff like HTTP, FTP, telnet, etc. - all plaintext protocols.&lt;/li&gt;&#xA;&lt;/ol&gt;&#xA;&lt;h2 id=&#34;layer-34-routing-and-rules&#34;&gt;Layer 3/4 Routing and Rules&lt;/h2&gt;&#xA;&lt;p&gt;Layer 3 concerns IP hops, but also (via Linux&amp;rsquo;s &lt;em&gt;netfilter&lt;/em&gt; framework) can implement NAT, firewalls, load balancing, ad security policies (e.g. dropping packets). We can also implement &lt;em&gt;netfilter&lt;/em&gt; rules targeting Layer 4 primitives, like port or protocol.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>9 - Breaking Container Isolation</title>
+      <link>http://localhost:1313/notes/container-security/container-security-ch.-9---breaking-container-isolation/</link>
+      <pubDate>Sun, 13 Oct 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/container-security/container-security-ch.-9---breaking-container-isolation/</guid>
+      <description>&lt;p&gt;Here we cover ways that container isolation can be broken, mostly accidentally.&lt;/p&gt;&#xA;&lt;h2 id=&#34;running-as-root&#34;&gt;Running as root&lt;/h2&gt;&#xA;&lt;p&gt;The Docker daemon requires root access - already a concern (also: anyone in the &lt;em&gt;docker&lt;/em&gt; group essentially has root access). But unless otherwise specified, all containers will run as &lt;em&gt;root&lt;/em&gt; inside the container. Processes started as root in the container will appear as root on the host. So if you&amp;rsquo;re able to break out of a container as root, you can do whatever you want. The &lt;em&gt;USER&lt;/em&gt; command in a Dockerfile will set a non-root user, as will the &lt;em&gt;&amp;ndash;user&lt;/em&gt; flag on the &lt;em&gt;docker run&lt;/em&gt; subcommand.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>7 - Software Vulnerability in Images</title>
+      <link>http://localhost:1313/notes/container-security/container-security-ch.-7---software-vulnerability-in-images/</link>
+      <pubDate>Fri, 11 Oct 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/container-security/container-security-ch.-7---software-vulnerability-in-images/</guid>
+      <description>&lt;p&gt;We need to scan for vulnerabilities in our container images. Vulnerabilities are publicly documented with a CVE - &lt;a href=&#34;https://cve.mitre.org/&#34;&gt;Common Vulnerabilities and Exposures&lt;/a&gt; - number, assigned by CNAs (CVE Numbering Authorities). The &lt;a href=&#34;https://nvd.nist.gov/&#34;&gt;National Vulnerabilities Database&lt;/a&gt; (NVD) lists these vulnerabilities for visibility and usage.&lt;/p&gt;&#xA;&lt;p&gt;Traditionally, we scan for vulnerabilities in software by listing out software installed on a host (via the root filesystem + software installed by a package manager like &lt;em&gt;npm&lt;/em&gt; or &lt;em&gt;brew&lt;/em&gt; + manual / adhoc installs via &lt;em&gt;wget&lt;/em&gt; or &lt;em&gt;curl&lt;/em&gt; (not a great idea)). Software can be updated or patched directly on the host.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>6 - Container Images</title>
+      <link>http://localhost:1313/notes/container-security/container-security-ch.-6---container-images/</link>
+      <pubDate>Thu, 10 Oct 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/container-security/container-security-ch.-6---container-images/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;Container images help us create containers.&lt;/strong&gt; They are typically stored in a registry. How we build, store, and retrieve images is crucial for container security.&lt;/p&gt;&#xA;&lt;p&gt;There are two parts to a container image: your root filesystem and your configuration. Per the &lt;a href=&#34;https://opencontainers.org/about/overview/&#34;&gt;OCI standard&lt;/a&gt;, there can also be an image manifest listing sources and dependencies. Tools like &lt;a href=&#34;https://github.com/containers/skopeo&#34;&gt;skopeo&lt;/a&gt; (working with image registries) and &lt;a href=&#34;https://github.com/opencontainers/umoci&#34;&gt;umoci&lt;/a&gt; (creating and interacting with OCI images) all work with the OCI standard, which has been around since 2015. Using umoci, we can see an image&amp;rsquo;s config.json contains very direct data about cgroups and Linux namespaces.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>5 - Virtual Machines</title>
+      <link>http://localhost:1313/notes/container-security/container-security-ch.-5---virtual-machines/</link>
+      <pubDate>Wed, 09 Oct 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/container-security/container-security-ch.-5---virtual-machines/</guid>
+      <description>&lt;p&gt;Virtual machines and Docker containers have different security boundaries. Fundamentally, virtual machines run an ENTIRE operating system including the kernel, whereas Docker containers share the host machine&amp;rsquo;s kernel. We can do a lot to harden up a container, but this distinction will remain.&lt;/p&gt;&#xA;&lt;p&gt;Normally when a server boots, it discovers via &lt;a href=&#34;https://en.wikipedia.org/wiki/BIOS&#34;&gt;BIOS&lt;/a&gt; what resources are available (memory, CPU, network interfaces), boots the kernel, and eventually enters user space. In the VM world, we insert a &lt;a href=&#34;https://en.wikipedia.org/wiki/Hypervisor&#34;&gt;&lt;strong&gt;Virtual Machine Monitor (VMM)&lt;/strong&gt;&lt;/a&gt; before that process, meaning that the VMM discovers physical resources, and then allocates some slice of resources to each guest VM it&amp;rsquo;s hosting. The VMM is responsible for creating and enforcing resource boundaries between its guest VMs. Meanwhile, the guest VM gets to be &amp;ldquo;normal&amp;rdquo;, discovering available resources same as always via BIOS, with no awareness that the VMM has fixed those resources already.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>4 - Container Isolation</title>
+      <link>http://localhost:1313/notes/container-security/container-security-ch.-4---container-isolation/</link>
+      <pubDate>Tue, 08 Oct 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/container-security/container-security-ch.-4---container-isolation/</guid>
+      <description>&lt;p&gt;Container isolation is achieved through a combination of Linux kernel features.&lt;/p&gt;&#xA;&lt;h2 id=&#34;namespaces&#34;&gt;Namespaces&lt;/h2&gt;&#xA;&lt;p&gt;Docker containers are primarily built from two Linux primitives - cgroups (covered last time) and &lt;strong&gt;namespaces&lt;/strong&gt;. Cgroups cover resource management per process - namespaces control what is visible to a process. Since a Docker container is nothing more than a Linux process, we can use namespaces of various types to control visibility of these resources:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Unix Timesharing System (UTS) - basically hostnames and domain names.&lt;/li&gt;&#xA;&lt;li&gt;Process IDs&lt;/li&gt;&#xA;&lt;li&gt;Mount points&lt;/li&gt;&#xA;&lt;li&gt;Network&lt;/li&gt;&#xA;&lt;li&gt;User and group IDs&lt;/li&gt;&#xA;&lt;li&gt;Inter-process communications (IPC)&lt;/li&gt;&#xA;&lt;li&gt;Control groups (cgroups)&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;A process is always in one namespace of each type. We can see this immediately with the &lt;em&gt;lsns&lt;/em&gt; command:&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>3 - Control Groups</title>
+      <link>http://localhost:1313/notes/container-security/container-security-ch.-3---control-groups/</link>
+      <pubDate>Sun, 29 Sep 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/container-security/container-security-ch.-3---control-groups/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;Control groups&lt;/strong&gt;, a.k.a. &lt;strong&gt;cgroups&lt;/strong&gt;, controls the resources that a process or group of processes can use. This includes things like memory, CPU, prioritization, and even number of PIDs. They were introduced into Linux in 2008, and have two major versions. &lt;em&gt;v2&lt;/em&gt; was released around 2015, and is approaching stable adoption.&lt;/p&gt;&#xA;&lt;p&gt;You can see your cgroups in various ways:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;strong&gt;lscgroup&lt;/strong&gt; from the cgroup-tools package - a nice formatted overview&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;ls -la /sys/fs/cgroup&lt;/strong&gt; - the raw files, managed by your system.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;cat /proc/$$/cgroup&lt;/strong&gt; - a given process&amp;rsquo;s cgroups, in this example your current PID&amp;rsquo;s ($$)&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;systemctl status&lt;/strong&gt; - lists lots of nicely-formatted info on processes, including your current user session. The CGroup is prominently listed.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;If you want to see all resources that have cgroup controllers:&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>8 - Strengthening Container Isolation</title>
+      <link>http://localhost:1313/notes/container-security/container-security-ch.-8---strengthening-container-isolation/</link>
+      <pubDate>Sun, 29 Sep 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/container-security/container-security-ch.-8---strengthening-container-isolation/</guid>
+      <description>&lt;p&gt;We examine here &lt;strong&gt;sandboxing&lt;/strong&gt; mechanisms, which isolate applications and restrict what they can do.&lt;/p&gt;&#xA;&lt;h2 id=&#34;seccomp&#34;&gt;seccomp&lt;/h2&gt;&#xA;&lt;p&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Seccomp&#34;&gt;seccomp&lt;/a&gt;, or &amp;ldquo;secure computing mode&amp;rdquo;, was introduced in Linux in 2005 and limited what syscalls could be made. Since 2012, it uses BPF (Berkeley Packet Filter) as &lt;strong&gt;seccomp-bpf&lt;/strong&gt; to create profiles that determine what to do when a given syscall is made. The filter looks at the syscall opcode and parameters, and makes a decision on whether to allow it, or how to trace it, and so on.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>2 - Linux System Calls, Permissions, and Capabilities</title>
+      <link>http://localhost:1313/notes/container-security/container-security-ch.-2---linux-system-calls-permissions-and-capabilities/</link>
+      <pubDate>Sat, 28 Sep 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/container-security/container-security-ch.-2---linux-system-calls-permissions-and-capabilities/</guid>
+      <description>&lt;h3 id=&#34;system-calls&#34;&gt;System Calls&lt;/h3&gt;&#xA;&lt;p&gt;All applications run in user space. Applications can make system calls, which involve interacting with the kernel. Since all containers are applications on one Linux host e.g. one kernel, managing system calls from containers is important. Some example system calls are things like &lt;em&gt;read&lt;/em&gt;, &lt;em&gt;write&lt;/em&gt;, &lt;em&gt;chown&lt;/em&gt;, &lt;em&gt;clone&lt;/em&gt;, &lt;em&gt;execve&lt;/em&gt;. Rarely do we make any system calls directly - in Golang, you might use the &lt;em&gt;glibc&lt;/em&gt; library in the &lt;em&gt;syscall&lt;/em&gt; package, but that&amp;rsquo;s at most.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>1 - Container Security Threats</title>
+      <link>http://localhost:1313/notes/container-security/container-security-ch.-1---container-security-threats/</link>
+      <pubDate>Fri, 27 Sep 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/notes/container-security/container-security-ch.-1---container-security-threats/</guid>
+      <description>&lt;p&gt;(recently finished reading &lt;a href=&#34;https://www.oreilly.com/library/view/container-security/9781492056690/&#34;&gt;Container Security&lt;/a&gt; by Liz Rice; excellent, well-structured read, highly recommended. I&amp;rsquo;ll be posting my notes on it for the next few days.)&lt;/p&gt;&#xA;&lt;p&gt;Docker is not the first isolation mechanism, but its CLI tooling really popularized the technology around 2013. Orchestrators like Kubernetes followed shortly thereafter.&lt;/p&gt;&#xA;&lt;p&gt;Containers are great. They provide isolation, reproducibility, and enable orchestration on a single host. But they also have an attack surface like any environment.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

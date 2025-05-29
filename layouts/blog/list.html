@@ -1,0 +1,62 @@
+{{ define "main" }}
+<content>
+    
+  {{ if .Data.Singular }}
+    <h3 style="margin-bottom:0">filtering for "{{ .Title }}"</h3>
+    <small>
+      <a href="{{ "blog" | relURL }}">remove filter</a>
+    </small>
+  {{ else }}
+    <!-- BEGIN TAG CLOUD -->
+    {{ partial "section-divider" (dict "title" "categories") }}
+    {{ $tags := slice }}
+    {{ range .Pages }}
+      {{ range .Params.tags }}
+        {{ $tags = $tags | append . }}
+      {{ end }}
+    {{ end }}
+
+    {{ $tagCount := dict }}
+    {{ range $tags }}
+      {{ $tag := . }}
+      {{ $count := 0 }}
+      {{ range $.Pages }}
+        {{ if in .Params.tags $tag }}
+          {{ $count = add $count 1 }}
+        {{ end }}
+      {{ end }}
+      {{ $tagCount = $tagCount | merge (dict $tag $count) }}
+    {{ end }}
+
+    {{ if gt (len $tagCount) 0 }}
+      <div style="background: #253F48; border-radius: 8px; padding: 1.5em; margin: 1em auto; text-align: center; width: 75%;">
+        {{ range $tag, $count := $tagCount }}
+          <a href="{{ (printf "/blog/%s" ($tag | urlize)) | relURL }}" style="margin: 0 0.5em; white-space: nowrap; display: inline-block;">
+            #{{ $tag }} ({{ $count }})
+          </a>
+        {{ end }}
+      </div>
+    {{ end }}
+    
+  {{ end }}
+  <!-- BEGIN POSTS -->
+  {{ partial "section-divider" (dict "title" "posts") }}
+    {{ range .Pages }}
+      <li>
+        <span>
+          <i>
+            <time datetime='{{ .Date.Format "2006-01-02" }}'>
+              {{ .Date.Format (default "02 Jan, 2006" .Site.Params.dateFormat) }}
+            </time>
+          </i>
+        </span>
+        <a href="{{ .Permalink }}">{{ .Title }}</a>
+      </li>
+    {{ else }}
+      <li>
+        No posts yet
+      </li>
+    {{ end }}
+  </ul>
+</content>
+{{ end }} 

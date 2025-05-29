@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="shortcut icon" href="http://localhost:1313/images/favicon.png" />
+<title>1 - Container Security Threats | John Montroy</title>
+<meta name="title" content="1 - Container Security Threats" />
+<meta name="description" content="(recently finished reading Container Security by Liz Rice; excellent, well-structured read, highly recommended. I&rsquo;ll be posting my notes on it for the next few days.)
+Docker is not the first isolation mechanism, but its CLI tooling really popularized the technology around 2013. Orchestrators like Kubernetes followed shortly thereafter.
+Containers are great. They provide isolation, reproducibility, and enable orchestration on a single host. But they also have an attack surface like any environment." />
+<meta name="keywords" content="container-security," />
+
+
+<meta property="og:url" content="http://localhost:1313/notes/container-security/container-security-ch.-1---container-security-threats/">
+  <meta property="og:site_name" content="John Montroy">
+  <meta property="og:title" content="1 - Container Security Threats">
+  <meta property="og:description" content="(recently finished reading Container Security by Liz Rice; excellent, well-structured read, highly recommended. I’ll be posting my notes on it for the next few days.)
+Docker is not the first isolation mechanism, but its CLI tooling really popularized the technology around 2013. Orchestrators like Kubernetes followed shortly thereafter.
+Containers are great. They provide isolation, reproducibility, and enable orchestration on a single host. But they also have an attack surface like any environment.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="notes">
+    <meta property="article:published_time" content="2024-09-27T00:00:00+00:00">
+    <meta property="article:modified_time" content="2024-09-27T00:00:00+00:00">
+    <meta property="article:tag" content="Container-Security">
+    <meta property="og:image" content="http://localhost:1313/images/share.png">
+
+
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://localhost:1313/images/share.png">
+  <meta name="twitter:title" content="1 - Container Security Threats">
+  <meta name="twitter:description" content="(recently finished reading Container Security by Liz Rice; excellent, well-structured read, highly recommended. I’ll be posting my notes on it for the next few days.)
+Docker is not the first isolation mechanism, but its CLI tooling really popularized the technology around 2013. Orchestrators like Kubernetes followed shortly thereafter.
+Containers are great. They provide isolation, reproducibility, and enable orchestration on a single host. But they also have an attack surface like any environment.">
+
+
+
+
+  <meta itemprop="name" content="1 - Container Security Threats">
+  <meta itemprop="description" content="(recently finished reading Container Security by Liz Rice; excellent, well-structured read, highly recommended. I’ll be posting my notes on it for the next few days.)
+Docker is not the first isolation mechanism, but its CLI tooling really popularized the technology around 2013. Orchestrators like Kubernetes followed shortly thereafter.
+Containers are great. They provide isolation, reproducibility, and enable orchestration on a single host. But they also have an attack surface like any environment.">
+  <meta itemprop="datePublished" content="2024-09-27T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2024-09-27T00:00:00+00:00">
+  <meta itemprop="wordCount" content="405">
+  <meta itemprop="image" content="http://localhost:1313/images/share.png">
+  <meta itemprop="keywords" content="Container-Security">
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+    --width: 720px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --code-background-color: #f2f2f2;
+    --code-color: #222;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --code-background-color: #000;
+      --code-color: #ddd;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  time {
+    font-family: monospace;
+    font-style: normal;
+    font-size: 15px;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+</style>
+
+</head>
+
+<body>
+  <header><a href="/" class="title">
+  <h2>John Montroy</h2>
+</a>
+<nav>
+<a href="/">home</a>
+
+<a href="/blog/">blog</a>
+
+<a href="/music/">music</a>
+
+<a href="/notes/">notes</a>
+
+</nav>
+</header>
+  <main>
+
+<content>
+  <p>(recently finished reading <a href="https://www.oreilly.com/library/view/container-security/9781492056690/">Container Security</a> by Liz Rice; excellent, well-structured read, highly recommended. I&rsquo;ll be posting my notes on it for the next few days.)</p>
+<p>Docker is not the first isolation mechanism, but its CLI tooling really popularized the technology around 2013. Orchestrators like Kubernetes followed shortly thereafter.</p>
+<p>Containers are great. They provide isolation, reproducibility, and enable orchestration on a single host. But they also have an attack surface like any environment.</p>
+<p>We mitigate risk by performing threat analysis - how might attackers steal data, for example? Compromising some day-zero exploit in a web service? SQL injection? These are threats, with the risk being &ldquo;stolen data&rdquo;.</p>
+<h3 id="container-threats">Container Threats</h3>
+<p>There are many kinds of container threats - internal vs. external, accidental vs. intentional, and sometimes just rogue processes with excess permissions. Each of these threats might have different access - credentials, permissions, network access, etc. And in a virtualized world, these threats can occur via many different vectors.</p>
+<h3 id="security-boundaries">Security Boundaries</h3>
+<p>Be aware of your many security boundaries: containers vs. virtualization vs. data centers vs. multitenancy. All different. The more boundaries an attacker must go through, the better.</p>
+<p>Different boundaries have different strengths - VMs are considered quite isolated from one another, with no access to the hypervisor running them. Containers, however, are less isolated. Shared machines are obviously the least isolated of all, but even with total isolation, we can still run into &ldquo;noisy neighbor&rdquo; issues. These might be exacerbated by things like AWS Fargate, where you get a container poofed into existence with no knowledge of where it is or what else is running on the bare metal.</p>
+<h3 id="security-privileges">Security Privileges</h3>
+<ul>
+<li><strong>Least Privilege</strong>: no more privileges than you need. If you don&rsquo;t write, grant read-only.</li>
+<li><strong>Defense in Depth</strong>: if one security layer fails, another will hopefully succeed.</li>
+<li><strong>Reducing the Attack Surface</strong>: the less code, access points, dependencies, even users — the better.</li>
+<li><strong>Limiting Blast Radius</strong>: this goes for deploys too. If a component fails, it shouldn&rsquo;t cascade through a broader system.</li>
+<li><strong>Segregation of Duties</strong>: each component should try to do one thing well, and only that one thing.</li>
+</ul>
+<p>Containers help with all of these (e.g. least privilege - just grant each container what it needs), except for arguably &ldquo;reducing the attack surface&rdquo; because splitting into microservices might increase attack surface area. But by the end of the book, we&rsquo;ll have understood these boundaries, threat models, and how we can properly use containers to follow these privileges.</p>
+
+</content>
+<p>
+  
+  <a href="http://localhost:1313/blog/container-security/">#Container-Security</a>
+  
+</p>
+
+  </main>
+  <footer>
+</footer>
+
+  
+</body>
+
+</html>

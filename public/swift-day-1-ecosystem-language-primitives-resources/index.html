@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="shortcut icon" href="http://localhost:1313/images/favicon.png" />
+<title>Swift (Day 1)  - Ecosystem, Language Primitives, Resources | John Montroy</title>
+<meta name="title" content="Swift (Day 1)  - Ecosystem, Language Primitives, Resources" />
+<meta name="description" content="I wanna make an app. iOS for starters (it&rsquo;s what my friend and I have). Have several ideas, have friends with several ideas. Wanna blog about the process, so here we go.
+
+Ecosystem: XCode &#43; Swift &#43; SwiftUI.
+
+XCode is a nice IDE so far - a lot of shortcuts map over from my IntelliJ experience, and the auto-compiling preview functionality &#43; different compilation targets has been smooth and transparent.
+I&rsquo;m not gonna mess with UIKit at all.
+I&rsquo;m sad that Android uses Kotlin, I wanted to learn Kotlin. But both ecosystems are fairly locked, what with Android being a Kotlin &#43; Jetpack Compose world.
+Cross-platform builds seem crippled by the usual suspects - lack of investment from the native platforms, complex access and abstraction to native primitives, native performance greatly exceeding cross-platform, etc. Options include Dart &#43; Flutter (also from Google), and Kotlin Multiplatform. For now, I&rsquo;ll stick to the native platforms.
+
+
+Language Primitives: Swift has a lot of them! This is a really &ldquo;feature-rich&rdquo; language - I&rsquo;m gonna miss Go. Some ones that have stuck out:
+
+Multiple initializers (designated, overloaded, convenience)
+Extensions (like Scala&rsquo;s implicit classes, it seems)
+Internal &#43; external function argument names (a new one for me, not sold yet)
+Guard statements (safe unwrapping is nice)
+Protocols (composable &#43; inheritable, embedded generics via associatedtype)
+Structs AND classes (small differences)
+Actors, async / await, queues too
+Attributes galore (@MainActor, @inlinable, @preconcurrency, @frozen etc.)
+So many ways to modify access, concurrency, optimizations via properties / access control (things like nonisolated, fileprivate, static, etc. &ndash; they all map to relatively sane, known concepts, but yeesh).
+
+
+Learning: good resources so far.
+
+ChatGPT-4o is my first line of inquiry for exploration. Super useful so far.
+The Swift book seems well-done.
+Apple has good resources including tutorials.
+
+I&rsquo;ve started with the Develop with Swift tutorial - lots of basics, but well-done.
+Swift Playgrounds are useful for a lot of sample apps.
+
+
+The Exercism #48in24 challenges will be good for brushing up basics (with Golang too!).
+I found some Swift repos I want to use as references, listed here.
+This list of open-source iOS apps will be useful for perusal; filter for most stars with &ldquo;swiftui&rdquo; tag:
+
+
+
+curl -o apps.json &#34;https://raw.githubusercontent.com/dkhamsing/open-source-ios-apps/refs/heads/master/contents.json&#34;
+jq &#39;.projects | map(select((.tags | index(&#34;swiftui&#34;)) and .stars != null)) | sort_by(-.stars)&#39; apps.json &gt; filtered_apps.json
+Lots to learn and do! Let&rsquo;s see how this goes." />
+<meta name="keywords" content="swift," />
+
+
+<meta property="og:url" content="http://localhost:1313/swift-day-1-ecosystem-language-primitives-resources/">
+  <meta property="og:site_name" content="John Montroy">
+  <meta property="og:title" content="Swift (Day 1)  - Ecosystem, Language Primitives, Resources">
+  <meta property="og:description" content="I wanna make an app. iOS for starters (it’s what my friend and I have). Have several ideas, have friends with several ideas. Wanna blog about the process, so here we go.
+Ecosystem: XCode &#43; Swift &#43; SwiftUI. XCode is a nice IDE so far - a lot of shortcuts map over from my IntelliJ experience, and the auto-compiling preview functionality &#43; different compilation targets has been smooth and transparent. I’m not gonna mess with UIKit at all. I’m sad that Android uses Kotlin, I wanted to learn Kotlin. But both ecosystems are fairly locked, what with Android being a Kotlin &#43; Jetpack Compose world. Cross-platform builds seem crippled by the usual suspects - lack of investment from the native platforms, complex access and abstraction to native primitives, native performance greatly exceeding cross-platform, etc. Options include Dart &#43; Flutter (also from Google), and Kotlin Multiplatform. For now, I’ll stick to the native platforms. Language Primitives: Swift has a lot of them! This is a really “feature-rich” language - I’m gonna miss Go. Some ones that have stuck out: Multiple initializers (designated, overloaded, convenience) Extensions (like Scala’s implicit classes, it seems) Internal &#43; external function argument names (a new one for me, not sold yet) Guard statements (safe unwrapping is nice) Protocols (composable &#43; inheritable, embedded generics via associatedtype) Structs AND classes (small differences) Actors, async / await, queues too Attributes galore (@MainActor, @inlinable, @preconcurrency, @frozen etc.) So many ways to modify access, concurrency, optimizations via properties / access control (things like nonisolated, fileprivate, static, etc. – they all map to relatively sane, known concepts, but yeesh). Learning: good resources so far. ChatGPT-4o is my first line of inquiry for exploration. Super useful so far. The Swift book seems well-done. Apple has good resources including tutorials. I’ve started with the Develop with Swift tutorial - lots of basics, but well-done. Swift Playgrounds are useful for a lot of sample apps. The Exercism #48in24 challenges will be good for brushing up basics (with Golang too!). I found some Swift repos I want to use as references, listed here. This list of open-source iOS apps will be useful for perusal; filter for most stars with “swiftui” tag: curl -o apps.json &#34;https://raw.githubusercontent.com/dkhamsing/open-source-ios-apps/refs/heads/master/contents.json&#34; jq &#39;.projects | map(select((.tags | index(&#34;swiftui&#34;)) and .stars != null)) | sort_by(-.stars)&#39; apps.json &gt; filtered_apps.json Lots to learn and do! Let’s see how this goes.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2024-10-28T00:00:00+00:00">
+    <meta property="article:modified_time" content="2024-10-28T00:00:00+00:00">
+    <meta property="article:tag" content="Swift">
+    <meta property="og:image" content="http://localhost:1313/images/share.png">
+
+
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://localhost:1313/images/share.png">
+  <meta name="twitter:title" content="Swift (Day 1)  - Ecosystem, Language Primitives, Resources">
+  <meta name="twitter:description" content="I wanna make an app. iOS for starters (it’s what my friend and I have). Have several ideas, have friends with several ideas. Wanna blog about the process, so here we go.
+Ecosystem: XCode &#43; Swift &#43; SwiftUI. XCode is a nice IDE so far - a lot of shortcuts map over from my IntelliJ experience, and the auto-compiling preview functionality &#43; different compilation targets has been smooth and transparent. I’m not gonna mess with UIKit at all. I’m sad that Android uses Kotlin, I wanted to learn Kotlin. But both ecosystems are fairly locked, what with Android being a Kotlin &#43; Jetpack Compose world. Cross-platform builds seem crippled by the usual suspects - lack of investment from the native platforms, complex access and abstraction to native primitives, native performance greatly exceeding cross-platform, etc. Options include Dart &#43; Flutter (also from Google), and Kotlin Multiplatform. For now, I’ll stick to the native platforms. Language Primitives: Swift has a lot of them! This is a really “feature-rich” language - I’m gonna miss Go. Some ones that have stuck out: Multiple initializers (designated, overloaded, convenience) Extensions (like Scala’s implicit classes, it seems) Internal &#43; external function argument names (a new one for me, not sold yet) Guard statements (safe unwrapping is nice) Protocols (composable &#43; inheritable, embedded generics via associatedtype) Structs AND classes (small differences) Actors, async / await, queues too Attributes galore (@MainActor, @inlinable, @preconcurrency, @frozen etc.) So many ways to modify access, concurrency, optimizations via properties / access control (things like nonisolated, fileprivate, static, etc. – they all map to relatively sane, known concepts, but yeesh). Learning: good resources so far. ChatGPT-4o is my first line of inquiry for exploration. Super useful so far. The Swift book seems well-done. Apple has good resources including tutorials. I’ve started with the Develop with Swift tutorial - lots of basics, but well-done. Swift Playgrounds are useful for a lot of sample apps. The Exercism #48in24 challenges will be good for brushing up basics (with Golang too!). I found some Swift repos I want to use as references, listed here. This list of open-source iOS apps will be useful for perusal; filter for most stars with “swiftui” tag: curl -o apps.json &#34;https://raw.githubusercontent.com/dkhamsing/open-source-ios-apps/refs/heads/master/contents.json&#34; jq &#39;.projects | map(select((.tags | index(&#34;swiftui&#34;)) and .stars != null)) | sort_by(-.stars)&#39; apps.json &gt; filtered_apps.json Lots to learn and do! Let’s see how this goes.">
+
+
+
+
+  <meta itemprop="name" content="Swift (Day 1)  - Ecosystem, Language Primitives, Resources">
+  <meta itemprop="description" content="I wanna make an app. iOS for starters (it’s what my friend and I have). Have several ideas, have friends with several ideas. Wanna blog about the process, so here we go.
+Ecosystem: XCode &#43; Swift &#43; SwiftUI. XCode is a nice IDE so far - a lot of shortcuts map over from my IntelliJ experience, and the auto-compiling preview functionality &#43; different compilation targets has been smooth and transparent. I’m not gonna mess with UIKit at all. I’m sad that Android uses Kotlin, I wanted to learn Kotlin. But both ecosystems are fairly locked, what with Android being a Kotlin &#43; Jetpack Compose world. Cross-platform builds seem crippled by the usual suspects - lack of investment from the native platforms, complex access and abstraction to native primitives, native performance greatly exceeding cross-platform, etc. Options include Dart &#43; Flutter (also from Google), and Kotlin Multiplatform. For now, I’ll stick to the native platforms. Language Primitives: Swift has a lot of them! This is a really “feature-rich” language - I’m gonna miss Go. Some ones that have stuck out: Multiple initializers (designated, overloaded, convenience) Extensions (like Scala’s implicit classes, it seems) Internal &#43; external function argument names (a new one for me, not sold yet) Guard statements (safe unwrapping is nice) Protocols (composable &#43; inheritable, embedded generics via associatedtype) Structs AND classes (small differences) Actors, async / await, queues too Attributes galore (@MainActor, @inlinable, @preconcurrency, @frozen etc.) So many ways to modify access, concurrency, optimizations via properties / access control (things like nonisolated, fileprivate, static, etc. – they all map to relatively sane, known concepts, but yeesh). Learning: good resources so far. ChatGPT-4o is my first line of inquiry for exploration. Super useful so far. The Swift book seems well-done. Apple has good resources including tutorials. I’ve started with the Develop with Swift tutorial - lots of basics, but well-done. Swift Playgrounds are useful for a lot of sample apps. The Exercism #48in24 challenges will be good for brushing up basics (with Golang too!). I found some Swift repos I want to use as references, listed here. This list of open-source iOS apps will be useful for perusal; filter for most stars with “swiftui” tag: curl -o apps.json &#34;https://raw.githubusercontent.com/dkhamsing/open-source-ios-apps/refs/heads/master/contents.json&#34; jq &#39;.projects | map(select((.tags | index(&#34;swiftui&#34;)) and .stars != null)) | sort_by(-.stars)&#39; apps.json &gt; filtered_apps.json Lots to learn and do! Let’s see how this goes.">
+  <meta itemprop="datePublished" content="2024-10-28T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2024-10-28T00:00:00+00:00">
+  <meta itemprop="wordCount" content="393">
+  <meta itemprop="image" content="http://localhost:1313/images/share.png">
+  <meta itemprop="keywords" content="Swift">
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+    --width: 720px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --code-background-color: #f2f2f2;
+    --code-color: #222;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --code-background-color: #000;
+      --code-color: #ddd;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  time {
+    font-family: monospace;
+    font-style: normal;
+    font-size: 15px;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+</style>
+
+</head>
+
+<body>
+  <header><a href="/" class="title">
+  <h2>John Montroy</h2>
+</a>
+<nav>
+<a href="/">home</a>
+
+<a href="/blog/">blog</a>
+
+<a href="/notes/">notes</a>
+
+<a href="/music/">music</a>
+
+</nav>
+</header>
+  <main>
+
+<h1>Swift (Day 1)  - Ecosystem, Language Primitives, Resources</h1>
+<p>
+  <i>
+    <time datetime='2024-10-28'>
+      28 Oct, 2024
+    </time>
+  </i>
+</p>
+
+<content>
+  <p>I wanna make an app. iOS for starters (it&rsquo;s what my friend and I have). Have several ideas, have friends with several ideas. Wanna blog about the process, so here we go.</p>
+<ul>
+<li><strong>Ecosystem</strong>: <a href="https://developer.apple.com/xcode/">XCode</a> + <a href="https://www.swift.org/documentation/">Swift</a> + <a href="https://developer.apple.com/xcode/swiftui/">SwiftUI</a>.
+<ul>
+<li>XCode is a nice IDE so far - a lot of shortcuts map over from my IntelliJ experience, and the auto-compiling preview functionality + different compilation targets has been smooth and transparent.</li>
+<li>I&rsquo;m not gonna mess with <a href="https://getuikit.com/">UIKit</a> at all.</li>
+<li>I&rsquo;m sad that Android uses Kotlin, I wanted to learn Kotlin. But both ecosystems are fairly locked, what with Android being a Kotlin + Jetpack Compose world.</li>
+<li>Cross-platform builds seem crippled by the usual suspects - lack of investment from the native platforms, complex access and abstraction to native primitives, native performance greatly exceeding cross-platform, etc. Options include <a href="https://dart.dev/overview">Dart + Flutter</a> (also from Google), and <a href="https://kotlinlang.org/docs/multiplatform.html">Kotlin Multiplatform</a>. For now, I&rsquo;ll stick to the native platforms.</li>
+</ul>
+</li>
+<li><strong>Language Primitives</strong>: Swift has a lot of them! This is a really &ldquo;feature-rich&rdquo; language - I&rsquo;m gonna miss Go. Some ones that have stuck out:
+<ul>
+<li>Multiple initializers (designated, overloaded, convenience)</li>
+<li><a href="https://docs.swift.org/swift-book/documentation/the-swift-programming-language/extensions/">Extensions</a> (like Scala&rsquo;s implicit classes, it seems)</li>
+<li><a href="https://medium.com/@talhasaygili/internal-and-external-parameter-names-in-swift-ae33aebbd859">Internal + external function argument names</a> (a new one for me, not sold yet)</li>
+<li><a href="https://docs.swift.org/swift-book/documentation/the-swift-programming-language/statements/#Guard-Statement">Guard statements</a> (safe unwrapping is nice)</li>
+<li><a href="https://docs.swift.org/swift-book/documentation/the-swift-programming-language/protocols/">Protocols</a> (composable + inheritable, embedded generics via associatedtype)</li>
+<li><a href="https://docs.swift.org/swift-book/documentation/the-swift-programming-language/classesandstructures">Structs AND classes</a> (small differences)</li>
+<li><a href="https://swiftrocks.com/how-async-await-works-internally-in-swift">Actors, async / await, queues</a> too</li>
+<li><a href="https://docs.swift.org/swift-book/documentation/the-swift-programming-language/attributes/#preconcurrency">Attributes</a> galore (<a href="https://developer.apple.com/documentation/swift/mainactor">@MainActor</a>, <strong>@inlinable</strong>, <strong>@preconcurrency</strong>, <strong>@frozen</strong> etc.)</li>
+<li>So many ways to modify access, concurrency, optimizations via <a href="https://docs.swift.org/swift-book/documentation/the-swift-programming-language/properties/">properties</a> / <a href="https://docs.swift.org/swift-book/documentation/the-swift-programming-language/accesscontrol/">access control</a> (things like <strong>nonisolated, fileprivate, static</strong>, etc. &ndash; they all map to relatively sane, known concepts, but yeesh).</li>
+</ul>
+</li>
+<li><strong>Learning</strong>: good resources so far.
+<ul>
+<li>ChatGPT-4o is my first line of inquiry for exploration. Super useful so far.</li>
+<li>The <a href="https://docs.swift.org/swift-book/documentation/the-swift-programming-language/">Swift book</a> seems well-done.</li>
+<li>Apple has <a href="https://developer.apple.com/swift/resources/">good resources including tutorials</a>.
+<ul>
+<li>I&rsquo;ve started with the <a href="https://developer.apple.com/tutorials/develop-in-swift/">Develop with Swift</a> tutorial - lots of basics, but well-done.</li>
+<li><a href="https://developer.apple.com/tutorials/sample-apps/">Swift Playgrounds</a> are useful for a lot of sample apps.</li>
+</ul>
+</li>
+<li>The Exercism <a href="https://exercism.org/challenges/48in24">#48in24</a> challenges will be good for brushing up basics (with Golang too!).</li>
+<li>I found some Swift repos I want to use as references, <a href="https://github.com/stars/jmontroy90/lists/good-swift">listed here</a>.</li>
+<li>This <a href="https://github.com/dkhamsing/open-source-ios-apps">list of open-source iOS apps</a> will be useful for perusal; filter for most stars with &ldquo;swiftui&rdquo; tag:</li>
+</ul>
+</li>
+</ul>
+<pre tabindex="0"><code>curl -o apps.json &#34;https://raw.githubusercontent.com/dkhamsing/open-source-ios-apps/refs/heads/master/contents.json&#34;
+jq &#39;.projects | map(select((.tags | index(&#34;swiftui&#34;)) and .stars != null)) | sort_by(-.stars)&#39; apps.json &gt; filtered_apps.json
+</code></pre><p>Lots to learn and do! Let&rsquo;s see how this goes.</p>
+
+</content>
+<p>
+  
+  <a href="http://localhost:1313/blog/swift/">#Swift</a>
+  
+</p>
+
+  </main>
+  <footer>Made with <a href="https://github.com/janraasch/hugo-bearblog/">Hugo ʕ•ᴥ•ʔ Bear</a>
+</footer>
+
+  
+</body>
+
+</html>

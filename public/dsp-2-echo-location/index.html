@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="shortcut icon" href="http://localhost:1313/images/favicon.png" />
+<title>DSP 2: Echo Location | John Montroy</title>
+<meta name="title" content="DSP 2: Echo Location" />
+<meta name="description" content="Three applications for DSP involving echo location:
+Radar (RAdio Detection And Ranging): works by firing a pulse of radio waves at an area you want to investigate. If something&rsquo;s there, it&rsquo;ll reflect the radio wave back to you.
+The longer the pulse, the more energy you have, but the less accurate you are. DSP helps here in a couple of ways: return signal compression, filtering noise, and pulse selection and generation. All of this is further aided by samplers that work on the order of megahertz, which is impressive!" />
+<meta name="keywords" content="dsp," />
+
+
+<meta property="og:url" content="http://localhost:1313/dsp-2-echo-location/">
+  <meta property="og:site_name" content="John Montroy">
+  <meta property="og:title" content="DSP 2: Echo Location">
+  <meta property="og:description" content="Three applications for DSP involving echo location:
+Radar (RAdio Detection And Ranging): works by firing a pulse of radio waves at an area you want to investigate. If something’s there, it’ll reflect the radio wave back to you.
+The longer the pulse, the more energy you have, but the less accurate you are. DSP helps here in a couple of ways: return signal compression, filtering noise, and pulse selection and generation. All of this is further aided by samplers that work on the order of megahertz, which is impressive!">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2023-09-27T00:00:00+00:00">
+    <meta property="article:modified_time" content="2023-09-27T00:00:00+00:00">
+    <meta property="article:tag" content="Dsp">
+    <meta property="og:image" content="http://localhost:1313/images/share.png">
+
+
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://localhost:1313/images/share.png">
+  <meta name="twitter:title" content="DSP 2: Echo Location">
+  <meta name="twitter:description" content="Three applications for DSP involving echo location:
+Radar (RAdio Detection And Ranging): works by firing a pulse of radio waves at an area you want to investigate. If something’s there, it’ll reflect the radio wave back to you.
+The longer the pulse, the more energy you have, but the less accurate you are. DSP helps here in a couple of ways: return signal compression, filtering noise, and pulse selection and generation. All of this is further aided by samplers that work on the order of megahertz, which is impressive!">
+
+
+
+
+  <meta itemprop="name" content="DSP 2: Echo Location">
+  <meta itemprop="description" content="Three applications for DSP involving echo location:
+Radar (RAdio Detection And Ranging): works by firing a pulse of radio waves at an area you want to investigate. If something’s there, it’ll reflect the radio wave back to you.
+The longer the pulse, the more energy you have, but the less accurate you are. DSP helps here in a couple of ways: return signal compression, filtering noise, and pulse selection and generation. All of this is further aided by samplers that work on the order of megahertz, which is impressive!">
+  <meta itemprop="datePublished" content="2023-09-27T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2023-09-27T00:00:00+00:00">
+  <meta itemprop="wordCount" content="247">
+  <meta itemprop="image" content="http://localhost:1313/images/share.png">
+  <meta itemprop="keywords" content="Dsp">
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+    --width: 720px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --code-background-color: #f2f2f2;
+    --code-color: #222;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --code-background-color: #000;
+      --code-color: #ddd;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  time {
+    font-family: monospace;
+    font-style: normal;
+    font-size: 15px;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+</style>
+
+</head>
+
+<body>
+  <header><a href="/" class="title">
+  <h2>John Montroy</h2>
+</a>
+<nav>
+<a href="/">home</a>
+
+<a href="/blog/">blog</a>
+
+<a href="/notes/">notes</a>
+
+<a href="/music/">music</a>
+
+</nav>
+</header>
+  <main>
+
+<h1>DSP 2: Echo Location</h1>
+<p>
+  <i>
+    <time datetime='2023-09-27'>
+      27 Sep, 2023
+    </time>
+  </i>
+</p>
+
+<content>
+  <p>Three applications for DSP involving echo location:</p>
+<p><strong>Radar</strong> (RAdio Detection And Ranging): works by firing a pulse of radio waves at an area you want to investigate. If something&rsquo;s there, it&rsquo;ll reflect the radio wave back to you.</p>
+<p>The longer the pulse, the more energy you have, but the less accurate you are. DSP helps here in a couple of ways: return signal compression, filtering noise, and pulse selection and generation. All of this is further aided by samplers that work on the order of megahertz, which is impressive!</p>
+<p><strong>Sonar</strong> (SOund NAvigation and Ranging): works similarly to radar, but in water. It&rsquo;s divided into two groups: active sonar emits pulses with frequencies between 2kHz - 40kHz, whereas passive sonar simply listens for activity. DSP helps in similar ways to radar - filtering, generation, combining, and so on.</p>
+<p><strong>Reflection seismology:</strong> This entails setting off explosions and measuring how the echoes are returned by layers of the earth, up to 10km beneath the surface. This practice made it possible to detect petroleum and minerals beneath the surface, by their unique seismic signal - more generally, it allowed us to map the earth&rsquo;s crust. However, the returned echoes are bouncing like crazy between layers of earth, so the echoes make more echoes. Filtering and processing these signals via DSP allows us to tackle some complex areas for investigation. Before DSP, geophysicists were pretty limited in how much geophysical complexity they could tackle, and mostly looked for oil in &ldquo;easy&rdquo; places.</p>
+
+</content>
+<p>
+  
+  <a href="http://localhost:1313/blog/dsp/">#Dsp</a>
+  
+</p>
+
+  </main>
+  <footer>Made with <a href="https://github.com/janraasch/hugo-bearblog/">Hugo ʕ•ᴥ•ʔ Bear</a>
+</footer>
+
+  
+</body>
+
+</html>

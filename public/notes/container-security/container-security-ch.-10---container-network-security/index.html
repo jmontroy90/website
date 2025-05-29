@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="shortcut icon" href="http://localhost:1313/images/favicon.png" />
+<title>10 - Container Network Security | John Montroy</title>
+<meta name="title" content="10 - Container Network Security" />
+<meta name="description" content="OSI Model (again)
+Taking the average HTTP packet application, we have:
+
+Layer 1: physical (usually) cabling and physical NIC ports.
+Layer 2: e.g. Ethernet. All interfaces have an ARP address. MAC addresses are resolved to IP addresses via ARP requests, which broadcast to all connected devices to resolve an IP (similar to DNS resolving). ARP requests constantly buzz on a network to keep the ARP cache from going stale.
+Layer 3: e.g. IP, ICMP. Internet addresses and hops between them. When traversing the broader internet via ISPs (BGP stuff!), data unwraps only to layer 3. No need to futz with higher stuff like ordering via TCP.
+Layer 4: e.g. TCP, UDP. This is where port numbers get introduced for TCP / UDP. Stateful vs. stateless connections!
+
+TCP opens with a SYN / ACK exchange that synchronizes sequence numbers between two hosts, which can then be used to maintain packet order. For each message, the sequence number is incremented by the number of bytes found in the data portion of the packet.
+UDP is stateless - packet order is not guaranteed, and packets can be dropped without warning.
+
+
+Layer 7: there&rsquo;s always fuzziness in skipping up to layer 7, but, broadly speaking, this is stuff like HTTP, FTP, telnet, etc. - all plaintext protocols.
+
+Layer 3/4 Routing and Rules
+Layer 3 concerns IP hops, but also (via Linux&rsquo;s netfilter framework) can implement NAT, firewalls, load balancing, ad security policies (e.g. dropping packets). We can also implement netfilter rules targeting Layer 4 primitives, like port or protocol." />
+<meta name="keywords" content="container-security," />
+
+
+<meta property="og:url" content="http://localhost:1313/notes/container-security/container-security-ch.-10---container-network-security/">
+  <meta property="og:site_name" content="John Montroy">
+  <meta property="og:title" content="10 - Container Network Security">
+  <meta property="og:description" content="OSI Model (again) Taking the average HTTP packet application, we have:
+Layer 1: physical (usually) cabling and physical NIC ports. Layer 2: e.g. Ethernet. All interfaces have an ARP address. MAC addresses are resolved to IP addresses via ARP requests, which broadcast to all connected devices to resolve an IP (similar to DNS resolving). ARP requests constantly buzz on a network to keep the ARP cache from going stale. Layer 3: e.g. IP, ICMP. Internet addresses and hops between them. When traversing the broader internet via ISPs (BGP stuff!), data unwraps only to layer 3. No need to futz with higher stuff like ordering via TCP. Layer 4: e.g. TCP, UDP. This is where port numbers get introduced for TCP / UDP. Stateful vs. stateless connections! TCP opens with a SYN / ACK exchange that synchronizes sequence numbers between two hosts, which can then be used to maintain packet order. For each message, the sequence number is incremented by the number of bytes found in the data portion of the packet. UDP is stateless - packet order is not guaranteed, and packets can be dropped without warning. Layer 7: there’s always fuzziness in skipping up to layer 7, but, broadly speaking, this is stuff like HTTP, FTP, telnet, etc. - all plaintext protocols. Layer 3/4 Routing and Rules Layer 3 concerns IP hops, but also (via Linux’s netfilter framework) can implement NAT, firewalls, load balancing, ad security policies (e.g. dropping packets). We can also implement netfilter rules targeting Layer 4 primitives, like port or protocol.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="notes">
+    <meta property="article:published_time" content="2024-10-14T00:00:00+00:00">
+    <meta property="article:modified_time" content="2024-10-14T00:00:00+00:00">
+    <meta property="article:tag" content="Container-Security">
+    <meta property="og:image" content="http://localhost:1313/images/share.png">
+
+
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://localhost:1313/images/share.png">
+  <meta name="twitter:title" content="10 - Container Network Security">
+  <meta name="twitter:description" content="OSI Model (again) Taking the average HTTP packet application, we have:
+Layer 1: physical (usually) cabling and physical NIC ports. Layer 2: e.g. Ethernet. All interfaces have an ARP address. MAC addresses are resolved to IP addresses via ARP requests, which broadcast to all connected devices to resolve an IP (similar to DNS resolving). ARP requests constantly buzz on a network to keep the ARP cache from going stale. Layer 3: e.g. IP, ICMP. Internet addresses and hops between them. When traversing the broader internet via ISPs (BGP stuff!), data unwraps only to layer 3. No need to futz with higher stuff like ordering via TCP. Layer 4: e.g. TCP, UDP. This is where port numbers get introduced for TCP / UDP. Stateful vs. stateless connections! TCP opens with a SYN / ACK exchange that synchronizes sequence numbers between two hosts, which can then be used to maintain packet order. For each message, the sequence number is incremented by the number of bytes found in the data portion of the packet. UDP is stateless - packet order is not guaranteed, and packets can be dropped without warning. Layer 7: there’s always fuzziness in skipping up to layer 7, but, broadly speaking, this is stuff like HTTP, FTP, telnet, etc. - all plaintext protocols. Layer 3/4 Routing and Rules Layer 3 concerns IP hops, but also (via Linux’s netfilter framework) can implement NAT, firewalls, load balancing, ad security policies (e.g. dropping packets). We can also implement netfilter rules targeting Layer 4 primitives, like port or protocol.">
+
+
+
+
+  <meta itemprop="name" content="10 - Container Network Security">
+  <meta itemprop="description" content="OSI Model (again) Taking the average HTTP packet application, we have:
+Layer 1: physical (usually) cabling and physical NIC ports. Layer 2: e.g. Ethernet. All interfaces have an ARP address. MAC addresses are resolved to IP addresses via ARP requests, which broadcast to all connected devices to resolve an IP (similar to DNS resolving). ARP requests constantly buzz on a network to keep the ARP cache from going stale. Layer 3: e.g. IP, ICMP. Internet addresses and hops between them. When traversing the broader internet via ISPs (BGP stuff!), data unwraps only to layer 3. No need to futz with higher stuff like ordering via TCP. Layer 4: e.g. TCP, UDP. This is where port numbers get introduced for TCP / UDP. Stateful vs. stateless connections! TCP opens with a SYN / ACK exchange that synchronizes sequence numbers between two hosts, which can then be used to maintain packet order. For each message, the sequence number is incremented by the number of bytes found in the data portion of the packet. UDP is stateless - packet order is not guaranteed, and packets can be dropped without warning. Layer 7: there’s always fuzziness in skipping up to layer 7, but, broadly speaking, this is stuff like HTTP, FTP, telnet, etc. - all plaintext protocols. Layer 3/4 Routing and Rules Layer 3 concerns IP hops, but also (via Linux’s netfilter framework) can implement NAT, firewalls, load balancing, ad security policies (e.g. dropping packets). We can also implement netfilter rules targeting Layer 4 primitives, like port or protocol.">
+  <meta itemprop="datePublished" content="2024-10-14T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2024-10-14T00:00:00+00:00">
+  <meta itemprop="wordCount" content="545">
+  <meta itemprop="image" content="http://localhost:1313/images/share.png">
+  <meta itemprop="keywords" content="Container-Security">
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+    --width: 720px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --code-background-color: #f2f2f2;
+    --code-color: #222;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --code-background-color: #000;
+      --code-color: #ddd;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  time {
+    font-family: monospace;
+    font-style: normal;
+    font-size: 15px;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+</style>
+
+</head>
+
+<body>
+  <header><a href="/" class="title">
+  <h2>John Montroy</h2>
+</a>
+<nav>
+<a href="/">home</a>
+
+<a href="/blog/">blog</a>
+
+<a href="/music/">music</a>
+
+<a href="/notes/">notes</a>
+
+</nav>
+</header>
+  <main>
+
+<content>
+  <h2 id="osi-model-again">OSI Model (again)</h2>
+<p>Taking the average HTTP packet application, we have:</p>
+<ol>
+<li><strong>Layer 1</strong>: physical (usually) cabling and physical NIC ports.</li>
+<li><strong>Layer 2</strong>: e.g. Ethernet. All interfaces have an ARP address. MAC addresses are resolved to IP addresses via ARP requests, which broadcast to all connected devices to resolve an IP (similar to DNS resolving). ARP requests constantly buzz on a network to keep the ARP cache from going stale.</li>
+<li><strong>Layer 3</strong>: e.g. IP, ICMP. Internet addresses and hops between them. When traversing the broader internet via ISPs (BGP stuff!), data unwraps only to layer 3. No need to futz with higher stuff like ordering via TCP.</li>
+<li><strong>Layer 4</strong>: e.g. TCP, UDP. This is where port numbers get introduced for TCP / UDP. Stateful vs. stateless connections!
+<ol>
+<li>TCP opens with a SYN / ACK exchange that synchronizes sequence numbers between two hosts, which can then be used to maintain packet order. For each message, the sequence number is incremented by the number of bytes found in the data portion of the packet.</li>
+<li>UDP is stateless - packet order is not guaranteed, and packets can be dropped without warning.</li>
+</ol>
+</li>
+<li><strong>Layer 7</strong>: there&rsquo;s always fuzziness in skipping up to layer 7, but, broadly speaking, this is stuff like HTTP, FTP, telnet, etc. - all plaintext protocols.</li>
+</ol>
+<h2 id="layer-34-routing-and-rules">Layer 3/4 Routing and Rules</h2>
+<p>Layer 3 concerns IP hops, but also (via Linux&rsquo;s <em>netfilter</em> framework) can implement NAT, firewalls, load balancing, ad security policies (e.g. dropping packets). We can also implement <em>netfilter</em> rules targeting Layer 4 primitives, like port or protocol.</p>
+<p>In Kubernetes, kube-proxy uses <em>iptables</em> or IPVS (IP Virtual Server) to implement network rules around firewalls, overlay networks, etc. <em>iptables</em>, for example, has rule types for <em>nat</em> and <em>filter</em>. <em>iptables</em> gets really bulky for bigger clusters, so IPVS is used more commonly - Kubernetes clusters are constantly moving pods and containers around, so you have to rewrite rules a LOT. This can be a lot of per-node overhead with <em>iptables</em>!</p>
+<p>If I recall correctly, there are TONS of network overlay solutions out there - might be worth watching a few videos on how things like Calico or Weave work, for a good refresher on Kubernetes networking.</p>
+<h2 id="network-policies">Network Policies</h2>
+<p>Networking policies can also be implemented using simple <em>netfilter</em>-based rules, where things like &ldquo;drop packets from this labeled Pod&rdquo;.</p>
+<p>Kubernetes doesn&rsquo;t implement this directly, despite providing the <em>NetworkPolicy</em> resource &ndash; it&rsquo;s up to plugins like <a href="https://github.com/weaveworks/weave">Weave</a> or <a href="https://www.tigera.io/project-calico/">Calico</a> to do this.</p>
+<p>There are some best practices around networking policies:</p>
+<ul>
+<li><strong>Default deny</strong>: deny all ingress traffic, allow exceptions one by one.</li>
+<li><strong>Default deny egress</strong>: don&rsquo;t let your pod talk to everyone.</li>
+<li><strong>Restrict ports</strong>: open ports are how we get compromised.</li>
+</ul>
+<p>Bear in mind - all of this is being implemented by networking plugins using layer 3 / 4 primitives! But we can implement more network functionality at layers 5-7!</p>
+<h2 id="service-mesh">Service Mesh</h2>
+<p>Service meshes are useful in the sidecar model, e.g. Istio. We get things like mTLS, canary deployments (Flagger), application-level network policy (&ldquo;I only want traffic from this particular service), logging / observability, and security (admission controls) with sidecars like Istio&rsquo;s.</p>
+<p>All containers in a Pod share the same network namespace, including sidecars, so be careful of what your sidecars can do networking-wise vs. your application (does your application need the <em>CAP_NET_ADMIN</em> capability?).</p>
+
+</content>
+<p>
+  
+  <a href="http://localhost:1313/blog/container-security/">#Container-Security</a>
+  
+</p>
+
+  </main>
+  <footer>
+</footer>
+
+  
+</body>
+
+</html>

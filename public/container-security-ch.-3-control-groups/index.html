@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="shortcut icon" href="http://localhost:1313/images/favicon.png" />
+<title>Container Security: Ch. 3 - Control Groups | John Montroy</title>
+<meta name="title" content="Container Security: Ch. 3 - Control Groups" />
+<meta name="description" content="Control groups, a.k.a. cgroups, controls the resources that a process or group of processes can use. This includes things like memory, CPU, prioritization, and even number of PIDs. They were introduced into Linux in 2008, and have two major versions. v2 was released around 2015, and is approaching stable adoption.
+You can see your cgroups in various ways:
+
+lscgroup from the cgroup-tools package - a nice formatted overview
+ls -la /sys/fs/cgroup - the raw files, managed by your system.
+cat /proc/$$/cgroup - a given process&rsquo;s cgroups, in this example your current PID&rsquo;s ($$)
+systemctl status - lists lots of nicely-formatted info on processes, including your current user session. The CGroup is prominently listed.
+
+If you want to see all resources that have cgroup controllers:" />
+<meta name="keywords" content="container-security," />
+
+
+<meta property="og:url" content="http://localhost:1313/container-security-ch.-3-control-groups/">
+  <meta property="og:site_name" content="John Montroy">
+  <meta property="og:title" content="Container Security: Ch. 3 - Control Groups">
+  <meta property="og:description" content="Control groups, a.k.a. cgroups, controls the resources that a process or group of processes can use. This includes things like memory, CPU, prioritization, and even number of PIDs. They were introduced into Linux in 2008, and have two major versions. v2 was released around 2015, and is approaching stable adoption.
+You can see your cgroups in various ways:
+lscgroup from the cgroup-tools package - a nice formatted overview ls -la /sys/fs/cgroup - the raw files, managed by your system. cat /proc/$$/cgroup - a given process’s cgroups, in this example your current PID’s ($$) systemctl status - lists lots of nicely-formatted info on processes, including your current user session. The CGroup is prominently listed. If you want to see all resources that have cgroup controllers:">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2024-09-29T00:00:00+00:00">
+    <meta property="article:modified_time" content="2024-09-29T00:00:00+00:00">
+    <meta property="article:tag" content="Container-Security">
+    <meta property="og:image" content="http://localhost:1313/images/share.png">
+
+
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://localhost:1313/images/share.png">
+  <meta name="twitter:title" content="Container Security: Ch. 3 - Control Groups">
+  <meta name="twitter:description" content="Control groups, a.k.a. cgroups, controls the resources that a process or group of processes can use. This includes things like memory, CPU, prioritization, and even number of PIDs. They were introduced into Linux in 2008, and have two major versions. v2 was released around 2015, and is approaching stable adoption.
+You can see your cgroups in various ways:
+lscgroup from the cgroup-tools package - a nice formatted overview ls -la /sys/fs/cgroup - the raw files, managed by your system. cat /proc/$$/cgroup - a given process’s cgroups, in this example your current PID’s ($$) systemctl status - lists lots of nicely-formatted info on processes, including your current user session. The CGroup is prominently listed. If you want to see all resources that have cgroup controllers:">
+
+
+
+
+  <meta itemprop="name" content="Container Security: Ch. 3 - Control Groups">
+  <meta itemprop="description" content="Control groups, a.k.a. cgroups, controls the resources that a process or group of processes can use. This includes things like memory, CPU, prioritization, and even number of PIDs. They were introduced into Linux in 2008, and have two major versions. v2 was released around 2015, and is approaching stable adoption.
+You can see your cgroups in various ways:
+lscgroup from the cgroup-tools package - a nice formatted overview ls -la /sys/fs/cgroup - the raw files, managed by your system. cat /proc/$$/cgroup - a given process’s cgroups, in this example your current PID’s ($$) systemctl status - lists lots of nicely-formatted info on processes, including your current user session. The CGroup is prominently listed. If you want to see all resources that have cgroup controllers:">
+  <meta itemprop="datePublished" content="2024-09-29T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2024-09-29T00:00:00+00:00">
+  <meta itemprop="wordCount" content="548">
+  <meta itemprop="image" content="http://localhost:1313/images/share.png">
+  <meta itemprop="keywords" content="Container-Security">
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+    --width: 720px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --code-background-color: #f2f2f2;
+    --code-color: #222;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --code-background-color: #000;
+      --code-color: #ddd;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  time {
+    font-family: monospace;
+    font-style: normal;
+    font-size: 15px;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+</style>
+
+</head>
+
+<body>
+  <header><a href="/" class="title">
+  <h2>John Montroy</h2>
+</a>
+<nav>
+<a href="/">home</a>
+
+<a href="/blog/">blog</a>
+
+<a href="/notes/">notes</a>
+
+<a href="/music/">music</a>
+
+</nav>
+</header>
+  <main>
+
+<h1>Container Security: Ch. 3 - Control Groups</h1>
+<p>
+  <i>
+    <time datetime='2024-09-29'>
+      29 Sep, 2024
+    </time>
+  </i>
+</p>
+
+<content>
+  <p><strong>Control groups</strong>, a.k.a. <strong>cgroups</strong>, controls the resources that a process or group of processes can use. This includes things like memory, CPU, prioritization, and even number of PIDs. They were introduced into Linux in 2008, and have two major versions. <em>v2</em> was released around 2015, and is approaching stable adoption.</p>
+<p>You can see your cgroups in various ways:</p>
+<ul>
+<li><strong>lscgroup</strong> from the cgroup-tools package - a nice formatted overview</li>
+<li><strong>ls -la /sys/fs/cgroup</strong> - the raw files, managed by your system.</li>
+<li><strong>cat /proc/$$/cgroup</strong> - a given process&rsquo;s cgroups, in this example your current PID&rsquo;s ($$)</li>
+<li><strong>systemctl status</strong> - lists lots of nicely-formatted info on processes, including your current user session. The CGroup is prominently listed.</li>
+</ul>
+<p>If you want to see all resources that have cgroup controllers:</p>
+<pre tabindex="0"><code>&gt; cat /sys/fs/cgroup/cgroup.controllers
+cpuset cpu io memory hugetlb pids rdma misc
+</code></pre><p>Managing cgroups can be done manually via creating directories (e.g. cgroups!) under <em>/sys/fs/cgroup</em>, and those directories will be populated with the requisite resource files for management. In practice, it&rsquo;s probably just best to find some tooling to do this for you, like what comes with <em>cgroup-tools</em>.</p>
+<p>Docker and Kubernetes (or rather, Kubernetes via Docker) just use cgroups to manage resource limits in specified in your Pod config. You can see Docker containers under the <em>system.slice/</em> cgroup, as well as the Docker daemon and Docker socket cgroups:</p>
+<pre tabindex="0"><code>&gt; ls /sys/fs/cgroup/system.slice/ | grep docker
+docker-1b11d97404bfc1e89c28db8cfa9bc9d33535cd0378ced515ecae5b65d6632a77.scope/
+docker.service/
+docker.socket/
+</code></pre><p>So for example, every process you start in the Docker container listed above will have resources managed by that first <em>docker-1b11&hellip;</em> scope, such that as you create processes in the container, you can watch the <em>pids.current</em> resource tick up:</p>
+<pre tabindex="0"><code># on host
+&gt; cat /sys/fs/cgroup/system.slice/docker-1b11&lt;...&gt;.scope/pids.current
+2
+
+# in container
+&gt; sleep 100 &amp;
+
+# on host 
+&gt; cat /sys/fs/cgroup/system.slice/docker-1b11&lt;...&gt;.scope/pids.current
+3
+</code></pre><p>You can also watch <em>pids.current</em> tick up inside the Docker container, where there&rsquo;s just one top-level cgroup (containers are light!).</p>
+<p>Meanwhile, processes started within your sessions will fall under the user.slice/ scope as various sessions. <em>systemctl status</em> shows all this nicely.</p>
+<h3 id="cgroups-v2">CGroups V2</h3>
+<p>Ubuntu 24.04 LTS uses <strong>cgroups v2</strong>. The main difference between cgroups v1 and v2 is how they approach hierarchy - v1 approaches it from a resources perspective, and v2 approaches it from a processes perspective. From this <a href="https://medium.com/some-tldrs/tldr-understanding-the-new-control-groups-api-by-rami-rosen-980df476f633">Medium article</a> (via <a href="https://www.youtube.com/watch?v=WxZK-UXKvXk">this KubeCon 2022 talk</a>):</p>
+<p><img src="https://static.wixstatic.com/media/004b14_536ab5aba3a842488a194326841a8c43~mv2.png" alt="CGroups V1 vs V2"></p>
+<p>The details of this aren&rsquo;t particularly important to this compared to the big picture - v1 enables &ldquo;flexibility&rdquo;, but in practice is kinda a mess:</p>
+<ul>
+<li>Most people want to manage resources on a process level. Managing cgroups via resources instead means a lot of coordinated resource changes across resource controllers.</li>
+<li>In v1, processes and even threads could belong to different resource cgroups, which can get really really complicated. In v2, that&rsquo;s not allowed.</li>
+<li>Subgrouping, and parameter propagation to those subgroups, got really messy in v1 because of the flexibility (some controllers propagated to subgroups, some didn&rsquo;t!). The single, unified hierarchy of v2, working at a process level, makes it much easier and more clear to see what&rsquo;s going on.</li>
+</ul>
+<p>V2 also introduces <strong>Pressure Stall Information</strong>, which basically gets us intel on resource usage over time, rather than just point-in-time statistics that mask how utilization behaves (bursty? steady increase?).</p>
+<p>Lastly, V2 enabled resource limits for rootless containers, e.g. containers don&rsquo;t have to run as root any more to use cgroups! Really great!</p>
+
+</content>
+<p>
+  
+  <a href="http://localhost:1313/blog/container-security/">#Container-Security</a>
+  
+</p>
+
+  </main>
+  <footer>Made with <a href="https://github.com/janraasch/hugo-bearblog/">Hugo ʕ•ᴥ•ʔ Bear</a>
+</footer>
+
+  
+</body>
+
+</html>

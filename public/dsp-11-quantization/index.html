@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="shortcut icon" href="http://localhost:1313/images/favicon.png" />
+<title>DSP 11: Quantization | John Montroy</title>
+<meta name="title" content="DSP 11: Quantization" />
+<meta name="description" content="
+Covered:
+
+Chapter 3: Quantization
+
+
+Key Terms:
+
+sampling, sample-and-hold
+quantization, analog-to-digital
+LSB
+dithering
+
+
+
+We need to convert a signal from analog to digital, e.g. continuous to discrete. That means making both the independent and dependent variables discrete:
+
+We make the independent variable (e.g. time) discrete via a sample-and-hold device, which samples and holds voltage steady at given points at time, like taking a snapshot at intervals. This is called sampling.
+We make the dependent variable (e.g. voltage) discrete via an ADC, e.g. analog-to-digital converter. It essentially rounds each snapshotted voltage to a given level, e.g. quantizing it based on the number of bits used in your ADC - your bit depth. This is called quantization.
+
+Quantization incurs error in its rounding-off process, with a max of ±0.5 least significant bit (LSB), which is fancy jargon for &ldquo;the distance between quantization levels&rdquo;, or just the step size (0.5 because if you go beyond that point from a level, you&rsquo;ll&hellip;just be rounded up to the next level). We can measure things in terms of LSB as a sort of unit." />
+<meta name="keywords" content="dsp," />
+
+
+<meta property="og:url" content="http://localhost:1313/dsp-11-quantization/">
+  <meta property="og:site_name" content="John Montroy">
+  <meta property="og:title" content="DSP 11: Quantization">
+  <meta property="og:description" content="Covered: Chapter 3: Quantization Key Terms: sampling, sample-and-hold quantization, analog-to-digital LSB dithering We need to convert a signal from analog to digital, e.g. continuous to discrete. That means making both the independent and dependent variables discrete:
+We make the independent variable (e.g. time) discrete via a sample-and-hold device, which samples and holds voltage steady at given points at time, like taking a snapshot at intervals. This is called sampling. We make the dependent variable (e.g. voltage) discrete via an ADC, e.g. analog-to-digital converter. It essentially rounds each snapshotted voltage to a given level, e.g. quantizing it based on the number of bits used in your ADC - your bit depth. This is called quantization. Quantization incurs error in its rounding-off process, with a max of ±0.5 least significant bit (LSB), which is fancy jargon for “the distance between quantization levels”, or just the step size (0.5 because if you go beyond that point from a level, you’ll…just be rounded up to the next level). We can measure things in terms of LSB as a sort of unit.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2023-12-20T00:00:00+00:00">
+    <meta property="article:modified_time" content="2023-12-20T00:00:00+00:00">
+    <meta property="article:tag" content="Dsp">
+    <meta property="og:image" content="http://localhost:1313/images/share.png">
+
+
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://localhost:1313/images/share.png">
+  <meta name="twitter:title" content="DSP 11: Quantization">
+  <meta name="twitter:description" content="Covered: Chapter 3: Quantization Key Terms: sampling, sample-and-hold quantization, analog-to-digital LSB dithering We need to convert a signal from analog to digital, e.g. continuous to discrete. That means making both the independent and dependent variables discrete:
+We make the independent variable (e.g. time) discrete via a sample-and-hold device, which samples and holds voltage steady at given points at time, like taking a snapshot at intervals. This is called sampling. We make the dependent variable (e.g. voltage) discrete via an ADC, e.g. analog-to-digital converter. It essentially rounds each snapshotted voltage to a given level, e.g. quantizing it based on the number of bits used in your ADC - your bit depth. This is called quantization. Quantization incurs error in its rounding-off process, with a max of ±0.5 least significant bit (LSB), which is fancy jargon for “the distance between quantization levels”, or just the step size (0.5 because if you go beyond that point from a level, you’ll…just be rounded up to the next level). We can measure things in terms of LSB as a sort of unit.">
+
+
+
+
+  <meta itemprop="name" content="DSP 11: Quantization">
+  <meta itemprop="description" content="Covered: Chapter 3: Quantization Key Terms: sampling, sample-and-hold quantization, analog-to-digital LSB dithering We need to convert a signal from analog to digital, e.g. continuous to discrete. That means making both the independent and dependent variables discrete:
+We make the independent variable (e.g. time) discrete via a sample-and-hold device, which samples and holds voltage steady at given points at time, like taking a snapshot at intervals. This is called sampling. We make the dependent variable (e.g. voltage) discrete via an ADC, e.g. analog-to-digital converter. It essentially rounds each snapshotted voltage to a given level, e.g. quantizing it based on the number of bits used in your ADC - your bit depth. This is called quantization. Quantization incurs error in its rounding-off process, with a max of ±0.5 least significant bit (LSB), which is fancy jargon for “the distance between quantization levels”, or just the step size (0.5 because if you go beyond that point from a level, you’ll…just be rounded up to the next level). We can measure things in terms of LSB as a sort of unit.">
+  <meta itemprop="datePublished" content="2023-12-20T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2023-12-20T00:00:00+00:00">
+  <meta itemprop="wordCount" content="556">
+  <meta itemprop="image" content="http://localhost:1313/images/share.png">
+  <meta itemprop="keywords" content="Dsp">
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+    --width: 720px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --code-background-color: #f2f2f2;
+    --code-color: #222;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --code-background-color: #000;
+      --code-color: #ddd;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  time {
+    font-family: monospace;
+    font-style: normal;
+    font-size: 15px;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+</style>
+
+</head>
+
+<body>
+  <header><a href="/" class="title">
+  <h2>John Montroy</h2>
+</a>
+<nav>
+<a href="/">home</a>
+
+<a href="/blog/">blog</a>
+
+<a href="/notes/">notes</a>
+
+<a href="/music/">music</a>
+
+</nav>
+</header>
+  <main>
+
+<h1>DSP 11: Quantization</h1>
+<p>
+  <i>
+    <time datetime='2023-12-20'>
+      20 Dec, 2023
+    </time>
+  </i>
+</p>
+
+<content>
+  <ul>
+<li>Covered:
+<ul>
+<li><a href="https://www.dspguide.com/ch3/1.htm">Chapter 3: Quantization</a></li>
+</ul>
+</li>
+<li>Key Terms:
+<ul>
+<li>sampling, sample-and-hold</li>
+<li>quantization, analog-to-digital</li>
+<li>LSB</li>
+<li>dithering</li>
+</ul>
+</li>
+</ul>
+<p>We need to convert a signal from analog to digital, e.g. continuous to discrete. That means making both the independent and dependent variables discrete:</p>
+<ul>
+<li>We make the independent variable (e.g. time) discrete via a <strong>sample-and-hold</strong> device, which samples and holds voltage steady at given points at time, like taking a snapshot at intervals. This is called <strong>sampling</strong>.</li>
+<li>We make the dependent variable (e.g. voltage) discrete via an ADC, e.g. <strong>analog-to-digital converter</strong>. It essentially rounds each snapshotted voltage to a given level, e.g. quantizing it based on the number of bits used in your ADC - your bit depth. This is called <strong>quantization</strong>.</li>
+</ul>
+<p>Quantization incurs error in its rounding-off process, with a max of ±0.5 least significant bit (<strong>LSB</strong>), which is fancy jargon for &ldquo;the distance between quantization levels&rdquo;, or just the step size (0.5 because if you go beyond that point from a level, you&rsquo;ll&hellip;just be rounded up to the next level). We can measure things in terms of LSB as a sort of unit.</p>
+<p>Quantization error can be modeled as random noise - this additive noise has a mean of zero and a standard deviation of 0.29 LSB. This means that the greater the bit depth - the more bits we use - the smaller the quantization error, and the higher the precision. We can also add this modeled noise to the underlying signal&rsquo;s inherent noise by adding their variances. This can help us figure out our actual required bit depth, because it helps us determine our expected total noise per bit depth:</p>
+<blockquote>
+<p>When faced with the decision of how many bits are needed in a system, ask two questions: (1) How much noise is already present in the analog signal? (2) How much noise can be tolerated in the digital signal?</p></blockquote>
+<p>This is a powerful model, but it doesn&rsquo;t hold when quantization error doesn&rsquo;t appear to be random. See below for a common example - repeated quantization yields the same digital value over and over again, which doesn&rsquo;t capture the actual nature of the signal (we&rsquo;ve lost information!):</p>
+<p><img src="https://static.wixstatic.com/media/004b14_23ccea3610d546e3839c90b12074e48e~mv2.png" alt="Quantization example"></p>
+<p>Here&rsquo;s where <strong>dithering</strong> can help. Dithering adds random noise - in the given example, a normally-distributed amount with standard deviation of 2/3 LSB. This basically turns small signal fluctuations into large ones, allowing the ADC to &ldquo;see&rdquo; the subtleties better and digitize more accurately:</p>
+<blockquote>
+<p>To understand how this improves the situation, imagine that the input signal is a constant analog voltage of 3.0001 volts, making it one-tenth of the way between the digital levels 3000 and 3001. Without dithering, taking 10,000 samples of this signal would produce 10,000 identical numbers, all having the value of 3000. Next, repeat the thought experiment with a small amount of dithering noise added. The 10,000 values will now oscillate between two (or more) levels, with about 90% having a value of 3000, and 10% having a value of 3001. Taking the average of all 10,000 values results in something close to 3000.1. Even though a single measurement has the inherent LSB limitation, the statistics of a large number of the samples can do much better. This is quite a strange situation: adding noise provides more information.</p></blockquote>
+<p>Visually, this looks like this:</p>
+<p><img src="https://static.wixstatic.com/media/004b14_ce77298175ab4a06ac5c254c9367f28a~mv2.png" alt="Dithering example"></p>
+<p>Dithering can get quite complex (&ldquo;subtractive dither&rdquo;), but we don&rsquo;t need to worry about that right now.</p>
+
+</content>
+<p>
+  
+  <a href="http://localhost:1313/blog/dsp/">#Dsp</a>
+  
+</p>
+
+  </main>
+  <footer>Made with <a href="https://github.com/janraasch/hugo-bearblog/">Hugo ʕ•ᴥ•ʔ Bear</a>
+</footer>
+
+  
+</body>
+
+</html>

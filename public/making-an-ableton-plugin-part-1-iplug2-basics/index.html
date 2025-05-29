@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="shortcut icon" href="http://localhost:1313/images/favicon.png" />
+<title>Making an Ableton Plugin Part 1: iPlug2 Basics | John Montroy</title>
+<meta name="title" content="Making an Ableton Plugin Part 1: iPlug2 Basics" />
+<meta name="description" content="I&rsquo;d like to use iPlug2 to get started with the C&#43;&#43; side of this. I&rsquo;ll be attempting to follow these docs.
+Environment
+
+
+To the right is my MacBook specs.
+I use iTerm2 on v3.4.4
+I use bash 5.1 instead of the stock zsh or (ugh) bash 3.2 on OSX.
+I installed** xcode 12.4** because I haven&rsquo;t upgraded to Big Sur yet. I needed to sign in with my Apple ID and find the older update, the App Store is too opinionated to let me do that.
+I use pyenv to manage my Python versions, and selected Python v3.9.6 for any dev work here.
+I&rsquo;m a JetBrain guy, so I installed CLion for my IDE. I&rsquo;m doing their 30-day eval; if my momentum can&rsquo;t last that long, that&rsquo;s a pretty strong sign.
+
+iPlug2 Setup
+I&rsquo;m following this guide, making notes of weirdness as I go." />
+<meta name="keywords" content="" />
+
+
+<meta property="og:url" content="http://localhost:1313/making-an-ableton-plugin-part-1-iplug2-basics/">
+  <meta property="og:site_name" content="John Montroy">
+  <meta property="og:title" content="Making an Ableton Plugin Part 1: iPlug2 Basics">
+  <meta property="og:description" content="I’d like to use iPlug2 to get started with the C&#43;&#43; side of this. I’ll be attempting to follow these docs.
+Environment To the right is my MacBook specs. I use iTerm2 on v3.4.4 I use bash 5.1 instead of the stock zsh or (ugh) bash 3.2 on OSX. I installed** xcode 12.4** because I haven’t upgraded to Big Sur yet. I needed to sign in with my Apple ID and find the older update, the App Store is too opinionated to let me do that. I use pyenv to manage my Python versions, and selected Python v3.9.6 for any dev work here. I’m a JetBrain guy, so I installed CLion for my IDE. I’m doing their 30-day eval; if my momentum can’t last that long, that’s a pretty strong sign. iPlug2 Setup I’m following this guide, making notes of weirdness as I go.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2021-07-18T00:00:00+00:00">
+    <meta property="article:modified_time" content="2021-07-18T00:00:00+00:00">
+    <meta property="og:image" content="http://localhost:1313/images/share.png">
+
+
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://localhost:1313/images/share.png">
+  <meta name="twitter:title" content="Making an Ableton Plugin Part 1: iPlug2 Basics">
+  <meta name="twitter:description" content="I’d like to use iPlug2 to get started with the C&#43;&#43; side of this. I’ll be attempting to follow these docs.
+Environment To the right is my MacBook specs. I use iTerm2 on v3.4.4 I use bash 5.1 instead of the stock zsh or (ugh) bash 3.2 on OSX. I installed** xcode 12.4** because I haven’t upgraded to Big Sur yet. I needed to sign in with my Apple ID and find the older update, the App Store is too opinionated to let me do that. I use pyenv to manage my Python versions, and selected Python v3.9.6 for any dev work here. I’m a JetBrain guy, so I installed CLion for my IDE. I’m doing their 30-day eval; if my momentum can’t last that long, that’s a pretty strong sign. iPlug2 Setup I’m following this guide, making notes of weirdness as I go.">
+
+
+
+
+  <meta itemprop="name" content="Making an Ableton Plugin Part 1: iPlug2 Basics">
+  <meta itemprop="description" content="I’d like to use iPlug2 to get started with the C&#43;&#43; side of this. I’ll be attempting to follow these docs.
+Environment To the right is my MacBook specs. I use iTerm2 on v3.4.4 I use bash 5.1 instead of the stock zsh or (ugh) bash 3.2 on OSX. I installed** xcode 12.4** because I haven’t upgraded to Big Sur yet. I needed to sign in with my Apple ID and find the older update, the App Store is too opinionated to let me do that. I use pyenv to manage my Python versions, and selected Python v3.9.6 for any dev work here. I’m a JetBrain guy, so I installed CLion for my IDE. I’m doing their 30-day eval; if my momentum can’t last that long, that’s a pretty strong sign. iPlug2 Setup I’m following this guide, making notes of weirdness as I go.">
+  <meta itemprop="datePublished" content="2021-07-18T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2021-07-18T00:00:00+00:00">
+  <meta itemprop="wordCount" content="741">
+  <meta itemprop="image" content="http://localhost:1313/images/share.png">
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+    --width: 720px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --code-background-color: #f2f2f2;
+    --code-color: #222;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --code-background-color: #000;
+      --code-color: #ddd;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  time {
+    font-family: monospace;
+    font-style: normal;
+    font-size: 15px;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+</style>
+
+</head>
+
+<body>
+  <header><a href="/" class="title">
+  <h2>John Montroy</h2>
+</a>
+<nav>
+<a href="/">home</a>
+
+<a href="/blog/">blog</a>
+
+<a href="/notes/">Notes</a>
+
+<a href="/music/">Music</a>
+
+</nav>
+</header>
+  <main>
+
+<h1>Making an Ableton Plugin Part 1: iPlug2 Basics</h1>
+<p>
+  <i>
+    <time datetime='2021-07-18'>
+      18 Jul, 2021
+    </time>
+  </i>
+</p>
+
+<content>
+  <p>I&rsquo;d like to use <a href="https://github.com/iPlug2/iPlug2">iPlug2</a> to get started with the C++ side of this. I&rsquo;ll be attempting to follow <a href="https://github.com/iPlug2/iPlug2/wiki/01_Getting_started_mac_ios">these docs</a>.</p>
+<h2 id="environment">Environment</h2>
+<p><img src="004b14_40b250d4ad464ad19d327154bc9ecf6a~mv2.jpg" alt="MacBook specs"></p>
+<ul>
+<li>To the right is my <strong>MacBook specs</strong>.</li>
+<li>I use <a href="https://iterm2.com/"><strong>iTerm2</strong></a> on v3.4.4</li>
+<li>I use <strong>bash 5.1</strong> instead of the stock zsh or (ugh) bash 3.2 on OSX.</li>
+<li>I installed** xcode 12.4** because I haven&rsquo;t upgraded to Big Sur yet. I needed to sign in with my Apple ID and <a href="https://developer.apple.com/download/all/?q=xcode">find the older update</a>, the App Store is too opinionated to let me do that.</li>
+<li>I use <a href="https://github.com/pyenv/pyenv"><strong>pyenv</strong></a> to manage my Python versions, and selected <strong>Python v3.9.6</strong> for any dev work here.</li>
+<li>I&rsquo;m a JetBrain guy, so I installed <a href="https://www.jetbrains.com/clion/download/#section=mac">CLion</a> for my IDE. I&rsquo;m doing their 30-day eval; if my momentum can&rsquo;t last that long, that&rsquo;s a pretty strong sign.</li>
+</ul>
+<h2 id="iplug2-setup">iPlug2 Setup</h2>
+<p>I&rsquo;m following <a href="https://github.com/iPlug2/iPlug2/wiki/01_Getting_started_mac_ios#set-up-your-development-environment">this guide</a>, making notes of weirdness as I go.</p>
+<p>When running:</p>
+<pre tabindex="0"><code>$ cd iPlug2/Dependencies/IPlug
+$ ./download-iplug-sdks.sh
+</code></pre><p>I did it with the cd first and it set things up wrong. Better directory management might be a cute PR to this repo already. I come from a Golang background, where vendoring dependencies is, like, fine, and honestly running random bash scripts spooks me more than a fat repo. Especially ironic given how many dev env artifacts the examples have (see below)</p>
+<p>(Also, this Wix editor is kinda clunky with code snippets.)</p>
+<p>XCode takes forever to install and is stupid massive. I might uninstall it if it was only recommended because of iOS development.</p>
+<p>In the iPlug2 repo, I opened up &ldquo;Examples/IPlugMidiEffect&rdquo; in CLion, to be greeted by this:</p>
+<p><img src="004b14_755e14f062df4819a4a5158454e09573~mv2.png" alt="IDE artifacts"></p>
+<p>So many development environment artifacts! .sln, .code-workspace, .vscode, .xcworkspace&hellip;I&rsquo;d like to not have to mess around with all those and just get to the guts of this, so let&rsquo;s figure out how to build directly for Mac without going through all the XCode-specific stuff in the instructions. If that fails, I&rsquo;ll fall back to XCode and try to trace what it does.</p>
+<p>I cd&rsquo;d to &ldquo;Examples/iPlugMidiEffect&rdquo; and ran &ldquo;./scripts/makedist-mac.sh&rdquo;.- it blew up completely. First problem was with XCode &ndash; since I installed it more manually, I didn&rsquo;t move the app to my /Applications folder, so pathing wasn&rsquo;t working.</p>
+<p>Once that was done, I retried the &ldquo;makedist-mac.sh&rdquo; script and it still blew up pretty dramatically. This stuff feels like it needs some more IDE-independent build scripts. I&rsquo;m gonna revert to their instructions with XCode.</p>
+<p>This &ldquo;IPlugInstrument&rdquo; is a simpler example, so I&rsquo;m gonna load it into CLion as well. It looks very similar - tons of IDE artifacts and similar folder layout. The &ldquo;makedist-mac.sh&rdquo; also doesn&rsquo;t work at all out of the box.</p>
+<p>This is what XCode looks like for IPlugInstrument:</p>
+<p><img src="004b14_b4946068dec64aea8b83ffcf92c12c54~mv2.png" alt="XCode for IPlugInstrument"></p>
+<p>Lots going on, but when I selected the Schema to &ldquo;macOS-APP&rdquo; like they suggested, and hit Cmd+R to build, ta-da!</p>
+<p><img src="004b14_e9885d400a344431928db3bd388600bd~mv2.png" alt="Built plugin"></p>
+<p>Okay, fair enough, as the instructions said &ndash; you need Reaper. I&rsquo;m gonna do the <a href="https://www.reaper.fm/download.php">60-day trial available here</a> (nothing is free in this plugin world, it seems).</p>
+<p>Or maybe you don&rsquo;t need Reaper? I built it once Reaper was installed, and it indeed opened in Reaper, which located my other VSTs as well (e.g. Serum). And I poked around in the &ldquo;Products&rdquo; part of XCode to see where the newly-built VST3 was located:</p>
+<p><img src="004b14_ef75f99ac7f5452e833b314769dbf008~mv2.png" alt="Products in XCode"></p>
+<p>It was way in some whacky folder, but &ndash; I opened up Ableton, and lo and behold!</p>
+<p><img src="004b14_c054ddc41d9f4b70ab385e7d77f0dc65~mv2.png" alt="Plugin in Ableton"></p>
+<p>So in terms of quick-start &ndash; not bad, but lots of magic. I&rsquo;d like to understand this a bit more next time, namely:</p>
+<ol>
+<li>How truly tethered to XCode am I?</li>
+<li>Do I need Reaper? Or is that just some weird lightweight VST player / env?</li>
+<li>Can I target a build format without going through XCode, or say Visual Studio? I&rsquo;d love to just have, you know, a bash script.</li>
+<li>Can I run my plugins out of a separate repo, or do they all literally need to be in the iPlug2 repo in a subdirectory?</li>
+<li>More broadly, is my goal of getting a plugin to modify note lengths and durations in the piano roll even do-able? Maybe I need to write a MIDI Effect, or Audio Effect, which I don&rsquo;t think is terribly different in principle, but we&rsquo;ll find out. Like, something like Arpegiattor + Note Length is in the ballpark of what I&rsquo;m after, but I don&rsquo;t know whether effects like that are able to consider both local and global context &ndash; specifically knowing if you&rsquo;re near other notes!</li>
+</ol>
+<p>Moderately successful session, but so many questions. Till next time.</p>
+
+</content>
+<p>
+  
+</p>
+
+  </main>
+  <footer>Made with <a href="https://github.com/janraasch/hugo-bearblog/">Hugo ʕ•ᴥ•ʔ Bear</a>
+</footer>
+
+  
+</body>
+
+</html>

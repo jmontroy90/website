@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="shortcut icon" href="http://localhost:1313/images/favicon.png" />
+<title>Advent of Code 2024 (Go) - Day 4: Read your prompts | John Montroy</title>
+<meta name="title" content="Advent of Code 2024 (Go) - Day 4: Read your prompts" />
+<meta name="description" content="
+GitHub: https://github.com/jmontroy90/aoc-2024-golang/tree/main/day4
+I wrote a working algorithm to recursively find every version of XMAS IF you were allowed to change directions each time. So I misread the prompt. I thought this was valid:
+X - - -
+- M - -
+- - A -
+- S - -
+This meant checking every direction for a valid next letter, every single time. Which (a) was a natural fit for recursion, and (b) generated way too many matches, and (c) literally isn&rsquo;t the problem, lol." />
+<meta name="keywords" content="advent of code," />
+
+
+<meta property="og:url" content="http://localhost:1313/advent-of-code-2024-go-day-4-read-your-prompts/">
+  <meta property="og:site_name" content="John Montroy">
+  <meta property="og:title" content="Advent of Code 2024 (Go) - Day 4: Read your prompts">
+  <meta property="og:description" content="GitHub: https://github.com/jmontroy90/aoc-2024-golang/tree/main/day4
+I wrote a working algorithm to recursively find every version of XMAS IF you were allowed to change directions each time. So I misread the prompt. I thought this was valid:
+X - - - - M - - - - A - - S - - This meant checking every direction for a valid next letter, every single time. Which (a) was a natural fit for recursion, and (b) generated way too many matches, and (c) literally isn’t the problem, lol.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2024-12-09T00:00:00+00:00">
+    <meta property="article:modified_time" content="2024-12-09T00:00:00+00:00">
+    <meta property="article:tag" content="Advent of Code">
+    <meta property="og:image" content="http://localhost:1313/images/share.png">
+
+
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://localhost:1313/images/share.png">
+  <meta name="twitter:title" content="Advent of Code 2024 (Go) - Day 4: Read your prompts">
+  <meta name="twitter:description" content="GitHub: https://github.com/jmontroy90/aoc-2024-golang/tree/main/day4
+I wrote a working algorithm to recursively find every version of XMAS IF you were allowed to change directions each time. So I misread the prompt. I thought this was valid:
+X - - - - M - - - - A - - S - - This meant checking every direction for a valid next letter, every single time. Which (a) was a natural fit for recursion, and (b) generated way too many matches, and (c) literally isn’t the problem, lol.">
+
+
+
+
+  <meta itemprop="name" content="Advent of Code 2024 (Go) - Day 4: Read your prompts">
+  <meta itemprop="description" content="GitHub: https://github.com/jmontroy90/aoc-2024-golang/tree/main/day4
+I wrote a working algorithm to recursively find every version of XMAS IF you were allowed to change directions each time. So I misread the prompt. I thought this was valid:
+X - - - - M - - - - A - - S - - This meant checking every direction for a valid next letter, every single time. Which (a) was a natural fit for recursion, and (b) generated way too many matches, and (c) literally isn’t the problem, lol.">
+  <meta itemprop="datePublished" content="2024-12-09T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2024-12-09T00:00:00+00:00">
+  <meta itemprop="wordCount" content="285">
+  <meta itemprop="image" content="http://localhost:1313/images/share.png">
+  <meta itemprop="keywords" content="Advent of Code">
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+    --width: 720px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --code-background-color: #f2f2f2;
+    --code-color: #222;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --code-background-color: #000;
+      --code-color: #ddd;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  time {
+    font-family: monospace;
+    font-style: normal;
+    font-size: 15px;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+</style>
+
+</head>
+
+<body>
+  <header><a href="/" class="title">
+  <h2>John Montroy</h2>
+</a>
+<nav>
+<a href="/">home</a>
+
+<a href="/blog/">blog</a>
+
+<a href="/notes/">notes</a>
+
+<a href="/music/">music</a>
+
+</nav>
+</header>
+  <main>
+
+<h1>Advent of Code 2024 (Go) - Day 4: Read your prompts</h1>
+<p>
+  <i>
+    <time datetime='2024-12-09'>
+      09 Dec, 2024
+    </time>
+  </i>
+</p>
+
+<content>
+  <p><img src="004b14_3facc5cfc65c4de19853c0ebd28432bd~mv2.jpeg" alt="I thought this was cute."></p>
+<p>GitHub: <a href="https://github.com/jmontroy90/aoc-2024-golang/tree/main/day4">https://github.com/jmontroy90/aoc-2024-golang/tree/main/day4</a></p>
+<p>I wrote a working algorithm to recursively find every version of <code>XMAS</code> <strong>IF you were allowed to change directions each time</strong>. So I misread the prompt. I thought this was valid:</p>
+<pre tabindex="0"><code>X - - -
+- M - -
+- - A -
+- S - -
+</code></pre><p>This meant checking every direction for a valid next letter, every single time. Which (a) was a natural fit for recursion, and (b) generated way too many matches, and (c) literally isn&rsquo;t the problem, lol.</p>
+<p>Takeaways today:</p>
+<ul>
+<li>Read your problem thoroughly. Read examples.</li>
+<li>Data structures can help simplify your search logic, at the expense of space. Plus, the verbosity lets users see exactly where and what you&rsquo;re searching for. I&rsquo;m trying to reach for intermediate data structures more and more - they help debug via intermediate state, and can often really simplify the logic (because instead you just store everything you need on an object and do all your operations at once).
+<ul>
+<li>It probably would&rsquo;ve been even easier to just make a map of the X around each &lsquo;A&rsquo;, including position and rune per corner, and then just compared that to the valid configurations. A little silly-feeling, but very clear.</li>
+</ul>
+</li>
+<li>If you&rsquo;re ever nesting loops very deeply, or reaching for loop labels, make a function instead.</li>
+<li>It&rsquo;s okay to be a bit redundant for the sake of simplicity. I over-check both part 1 and part 2, but being more efficient (fewer loops) would require managing more state for part 2. For part 1, it&rsquo;d just be an early-exit, which isn&rsquo;t at all a big deal and is totally a low-hanging fruit win.</li>
+</ul>
+<p>Not too bad here! Once I read the prompt right, it didn&rsquo;t take long.</p>
+
+</content>
+<p>
+  
+  <a href="http://localhost:1313/blog/advent-of-code/">#Advent of Code</a>
+  
+</p>
+
+  </main>
+  <footer>Made with <a href="https://github.com/janraasch/hugo-bearblog/">Hugo ʕ•ᴥ•ʔ Bear</a>
+</footer>
+
+  
+</body>
+
+</html>

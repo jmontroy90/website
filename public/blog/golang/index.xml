@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Golang on John Montroy</title>
+    <link>http://localhost:1313/blog/golang/</link>
+    <description>Recent content in Golang on John Montroy</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <copyright>Copyright © 2025, John Montroy.</copyright>
+    <lastBuildDate>Thu, 12 Dec 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/blog/golang/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Advent of Code 2024 (Go) - Day 5: Squinting at indexes</title>
+      <link>http://localhost:1313/advent-of-code-2024-go-day-5-squinting-at-indexes/</link>
+      <pubDate>Thu, 12 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/advent-of-code-2024-go-day-5-squinting-at-indexes/</guid>
+      <description>&lt;p&gt;GitHub: &lt;a href=&#34;https://github.com/jmontroy90/aoc-2024-golang/tree/main/day5&#34;&gt;https://github.com/jmontroy90/aoc-2024-golang/tree/main/day5&lt;/a&gt;&lt;/p&gt;&#xA;&lt;blockquote&gt;&#xA;&lt;p&gt;Side note: I&amp;rsquo;m caught up! These blogs will still come out behind schedule, since the time delay allows me some time to (ideally) brush up and study a bit more before the blog.&lt;/p&gt;&lt;/blockquote&gt;&#xA;&lt;p&gt;I feel like my approach here is pretty ugly and loopy, and so would be interested in other approaches. The basic idea for re-ordering (and also checking order):&lt;/p&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;The ordering rules are stored in a &lt;code&gt;map[int][]int&lt;/code&gt;, where each value (slice) shows all the elements that must appear in our list &lt;strong&gt;BEFORE&lt;/strong&gt; the key.&lt;/li&gt;&#xA;&lt;li&gt;So for each element in our list, we look it up in the ordering rules, and for each &amp;ldquo;must appear before&amp;rdquo; (MAB) element in the rule, we scan all elements after our key element to see any violating MAB elements.&lt;/li&gt;&#xA;&lt;li&gt;If we do find a MAB element, we insert it right before our key element, and remove it from its original location.&lt;/li&gt;&#xA;&lt;li&gt;Each sorting over our input list MIGHT introduce other sorting issues, since it&amp;rsquo;s a greedy, local algorithm. So we attempt to reorder until all rules pass. Usually this is 1 - 4 passes.&lt;/li&gt;&#xA;&lt;/ol&gt;&#xA;&lt;p&gt;Key takeways:&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Advent of Code 2024 (Go) - Day 4: Read your prompts</title>
+      <link>http://localhost:1313/advent-of-code-2024-go-day-4-read-your-prompts/</link>
+      <pubDate>Mon, 09 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/advent-of-code-2024-go-day-4-read-your-prompts/</guid>
+      <description>&lt;p&gt;&lt;img src=&#34;004b14_3facc5cfc65c4de19853c0ebd28432bd~mv2.jpeg&#34; alt=&#34;I thought this was cute.&#34;&gt;&lt;/p&gt;&#xA;&lt;p&gt;GitHub: &lt;a href=&#34;https://github.com/jmontroy90/aoc-2024-golang/tree/main/day4&#34;&gt;https://github.com/jmontroy90/aoc-2024-golang/tree/main/day4&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;I wrote a working algorithm to recursively find every version of &lt;code&gt;XMAS&lt;/code&gt; &lt;strong&gt;IF you were allowed to change directions each time&lt;/strong&gt;. So I misread the prompt. I thought this was valid:&lt;/p&gt;&#xA;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;X - - -&#xA;- M - -&#xA;- - A -&#xA;- S - -&#xA;&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;This meant checking every direction for a valid next letter, every single time. Which (a) was a natural fit for recursion, and (b) generated way too many matches, and (c) literally isn&amp;rsquo;t the problem, lol.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Advent of Code 2024 (Go) - Day 3: Sometimes subproblems sustain state.</title>
+      <link>http://localhost:1313/advent-of-code-2024-go-day-3-sometimes-subproblems-sustain-state./</link>
+      <pubDate>Sat, 07 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/advent-of-code-2024-go-day-3-sometimes-subproblems-sustain-state./</guid>
+      <description>&lt;p&gt;GitHub: &lt;a href=&#34;https://github.com/jmontroy90/aoc-2024-golang/tree/main/day3&#34;&gt;https://github.com/jmontroy90/aoc-2024-golang/tree/main/day3&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;Okay, not too bad here. My first pass has a lot of state management and object conversion that might be placed on methods, but there&amp;rsquo;s not a nice boundary that I can immediately find. I&amp;rsquo;m not gonna write table tests for this, since it wasn&amp;rsquo;t really helpful or needed, but I took the chance to write a benchmark. Simple.&lt;/p&gt;&#xA;&lt;p&gt;Side note - the &lt;em&gt;-8&lt;/em&gt; or whatever you get appended on your benchmark test name is the number of CPUs used to run the benchmark. By default, it&amp;rsquo;s &lt;em&gt;GOMAXPROCS&lt;/em&gt;. You can try different combos on the command line via:&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Advent of Code 2024 (Go): Day 1 &#43; Day 2</title>
+      <link>http://localhost:1313/advent-of-code-2024-go-day-1--day-2/</link>
+      <pubDate>Thu, 05 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/advent-of-code-2024-go-day-1--day-2/</guid>
+      <description>&lt;p&gt;&lt;em&gt;(side note: I&amp;rsquo;m done learning Swift for now. I&amp;rsquo;ll come back to it in the new year, perhaps. I was enjoying my C++ adventures in plugin programming [Juce] more anywho. Also like I have skiing to do?!)&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;I&amp;rsquo;m doing Advent of Code! The goal is to do it all this year. A great chance to really brush up my Go - Exercism has been nice, but a little easy. The more the merrier though!&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

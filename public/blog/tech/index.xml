@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tech on John Montroy</title>
+    <link>http://localhost:1313/blog/tech/</link>
+    <description>Recent content in Tech on John Montroy</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <copyright>Copyright © 2025, John Montroy.</copyright>
+    <lastBuildDate>Mon, 08 Nov 2021 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/blog/tech/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>A Supposedly Useful Thing I&#39;ll Never Do Again: Python Code Generation</title>
+      <link>http://localhost:1313/a-supposedly-useful-thing-ill-never-do-again-python-code-generation/</link>
+      <pubDate>Mon, 08 Nov 2021 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/a-supposedly-useful-thing-ill-never-do-again-python-code-generation/</guid>
+      <description>&lt;p&gt;New team, new language, new me. Security + Python. Learning Python is going well, although I don&amp;rsquo;t really like the language for so many reasons. But feeling good.&lt;/p&gt;&#xA;&lt;p&gt;Feeling wise &amp;ndash; recent staff engineer, and armed with the tentative insight that what makes me a good engineer is the tendency to ask &amp;ldquo;does this exist? do we need to write code for this?&amp;rdquo;.&lt;/p&gt;&#xA;&lt;p&gt;Assigned a new task - an automation platform for cloud operations. Okay, let&amp;rsquo;s do it. FastAPI, OpenAPI, automated tests, boom. Everything is FLOWING. My team seems delighted.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

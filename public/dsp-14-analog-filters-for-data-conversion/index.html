@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="shortcut icon" href="http://localhost:1313/images/favicon.png" />
+<title>DSP 14: Analog Filters for Data Conversion | John Montroy</title>
+<meta name="title" content="DSP 14: Analog Filters for Data Conversion" />
+<meta name="description" content="
+Covered:
+
+Chapter 3: Analog Filters for Data Conversion
+
+
+Key Terms:
+
+anti-aliasing filter
+Chebyshev, Butterworth, Bessel
+Sallen-Key Circuit
+
+
+Questions:
+
+How the heck does a Sallen-Key Circuit work?
+What is a switched capacitor filter, exactly?
+Is &ldquo;anti-aliasing&rdquo; here similar to the graphical antialiasing setting?
+
+
+
+(Programming note: we&rsquo;re back! Took some time to see Hoi An and Da Nang with a friend. Happy 2024! May your luck be analog and your emotions only as convolved as you desire.)" />
+<meta name="keywords" content="dsp," />
+
+
+<meta property="og:url" content="http://localhost:1313/dsp-14-analog-filters-for-data-conversion/">
+  <meta property="og:site_name" content="John Montroy">
+  <meta property="og:title" content="DSP 14: Analog Filters for Data Conversion">
+  <meta property="og:description" content="Covered: Chapter 3: Analog Filters for Data Conversion Key Terms: anti-aliasing filter Chebyshev, Butterworth, Bessel Sallen-Key Circuit Questions: How the heck does a Sallen-Key Circuit work? What is a switched capacitor filter, exactly? Is “anti-aliasing” here similar to the graphical antialiasing setting? (Programming note: we’re back! Took some time to see Hoi An and Da Nang with a friend. Happy 2024! May your luck be analog and your emotions only as convolved as you desire.)">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2024-01-02T00:00:00+00:00">
+    <meta property="article:modified_time" content="2024-01-02T00:00:00+00:00">
+    <meta property="article:tag" content="Dsp">
+    <meta property="og:image" content="http://localhost:1313/images/share.png">
+
+
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://localhost:1313/images/share.png">
+  <meta name="twitter:title" content="DSP 14: Analog Filters for Data Conversion">
+  <meta name="twitter:description" content="Covered: Chapter 3: Analog Filters for Data Conversion Key Terms: anti-aliasing filter Chebyshev, Butterworth, Bessel Sallen-Key Circuit Questions: How the heck does a Sallen-Key Circuit work? What is a switched capacitor filter, exactly? Is “anti-aliasing” here similar to the graphical antialiasing setting? (Programming note: we’re back! Took some time to see Hoi An and Da Nang with a friend. Happy 2024! May your luck be analog and your emotions only as convolved as you desire.)">
+
+
+
+
+  <meta itemprop="name" content="DSP 14: Analog Filters for Data Conversion">
+  <meta itemprop="description" content="Covered: Chapter 3: Analog Filters for Data Conversion Key Terms: anti-aliasing filter Chebyshev, Butterworth, Bessel Sallen-Key Circuit Questions: How the heck does a Sallen-Key Circuit work? What is a switched capacitor filter, exactly? Is “anti-aliasing” here similar to the graphical antialiasing setting? (Programming note: we’re back! Took some time to see Hoi An and Da Nang with a friend. Happy 2024! May your luck be analog and your emotions only as convolved as you desire.)">
+  <meta itemprop="datePublished" content="2024-01-02T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2024-01-02T00:00:00+00:00">
+  <meta itemprop="wordCount" content="389">
+  <meta itemprop="image" content="http://localhost:1313/images/share.png">
+  <meta itemprop="keywords" content="Dsp">
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+    --width: 720px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --code-background-color: #f2f2f2;
+    --code-color: #222;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --code-background-color: #000;
+      --code-color: #ddd;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  time {
+    font-family: monospace;
+    font-style: normal;
+    font-size: 15px;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+</style>
+
+</head>
+
+<body>
+  <header><a href="/" class="title">
+  <h2>John Montroy</h2>
+</a>
+<nav>
+<a href="/">home</a>
+
+<a href="/blog/">blog</a>
+
+<a href="/notes/">notes</a>
+
+<a href="/music/">music</a>
+
+</nav>
+</header>
+  <main>
+
+<h1>DSP 14: Analog Filters for Data Conversion</h1>
+<p>
+  <i>
+    <time datetime='2024-01-02'>
+      02 Jan, 2024
+    </time>
+  </i>
+</p>
+
+<content>
+  <ul>
+<li>Covered:
+<ul>
+<li><a href="https://www.dspguide.com/ch3/4.htm">Chapter 3: Analog Filters for Data Conversion</a></li>
+</ul>
+</li>
+<li>Key Terms:
+<ul>
+<li>anti-aliasing filter</li>
+<li>Chebyshev, Butterworth, Bessel</li>
+<li>Sallen-Key Circuit</li>
+</ul>
+</li>
+<li>Questions:
+<ul>
+<li>How the heck does a Sallen-Key Circuit work?</li>
+<li>What is a switched capacitor filter, exactly?</li>
+<li>Is &ldquo;anti-aliasing&rdquo; here similar to the graphical antialiasing setting?</li>
+</ul>
+</li>
+</ul>
+<p>(Programming note: we&rsquo;re back! Took some time to see Hoi An and Da Nang with a friend. Happy 2024! May your luck be analog and your emotions only as convolved as you desire.)</p>
+<hr>
+<p>So how do we actually remove frequencies above the Nyquist rate from the analog signal, in order to prevent aliasing? Well, we use an <strong>antialias filter</strong>! Note that we also use a <em>reconstruction filter</em> after the DAC, to compensate for conversion artifacts (I&rsquo;m sure I&rsquo;ll learn more on this later):</p>
+<p><img src="https://static.wixstatic.com/media/004b14_dbff20ca923e4402971373aed29a82ea~mv2.png" alt="Diagram showing analog signal processing chain"></p>
+<p>We need to understand these hardware filters, especially if we aim to replace hardware filtering with software.</p>
+<p>There are three kinds of filters:</p>
+<ol>
+<li><strong>Chebyshev</strong> - best at roll-off</li>
+<li><strong>Butterworth</strong> - best at passband ripple</li>
+<li><strong>Bessel</strong> - best at step response and passband ripple</li>
+</ol>
+<p>They can all be made from simple RC circuits, in particular the <em><strong>Sallen-Key Circuit</strong></em>, and all have different intended behaviors and trade-offs.</p>
+<p>These circuits are great in theory, but difficult in practice (hard to put resistors on an integrated circuit), and so instead the switched capacitor filter is preferred, since it can be manufactured as an integrated circuit quite easily. Here, instead of the cutoff filter being related to capacitance, the cutoff filter is related to the clock frequency used to drive the switches.</p>
+<p>Observe the following rolloffs per filter:</p>
+<p><img src="https://static.wixstatic.com/media/004b14_f7fe78d2d2164966aaf35ebb5f355617~mv2.png" alt="Frequency response comparison of filter types"></p>
+<p>You&rsquo;ll notice the following characteristics per filter:</p>
+<ol>
+<li>Each filter has some <strong>rolloff</strong> in frequency, meaning you need some wiggle room in your Nyquist rate. If you want to keep everything below 5kHz, you can&rsquo;t just sample at 10kHz - you need to account for the rolloff of your chosen analog antialias filter! The Chebyshev filter performs best here.</li>
+<li>Each filter has some degree of <strong>passband ripple</strong> (the waviness in amplitude on the top of the passband), in particular the Chebyshev filter. The Butterworth and Bessel do well here - Bessel at the cost of roll-off.</li>
+<li>See below: each filter has some <strong>step response</strong>, e.g. how quickly and well the filter responds to a step increase in input. The Bessel filter does great; the other two overshoot and have some ringing frequencies:</li>
+</ol>
+<p><img src="https://static.wixstatic.com/media/004b14_ab7d7530d39c4b9989e3aaba0e7d9daa~mv2.png" alt="Step response comparison of filter types"></p>
+
+</content>
+<p>
+  
+  <a href="http://localhost:1313/blog/dsp/">#Dsp</a>
+  
+</p>
+
+  </main>
+  <footer>Made with <a href="https://github.com/janraasch/hugo-bearblog/">Hugo ʕ•ᴥ•ʔ Bear</a>
+</footer>
+
+  
+</body>
+
+</html>
