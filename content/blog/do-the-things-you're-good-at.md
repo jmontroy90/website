@@ -5,7 +5,7 @@ tags = ["personal"]
 title = "do the things you're good at"
 +++
 
-![Olomana's third peak in Oahu - a hard climb I loved!](/img/do-the-things-youre-good-at/olomana.png)
+![Olomana's third peak in Oahu - a hard climb I loved!](/img/blog/do-the-things-youre-good-at/olomana.png)
 
 I've always been a jumpy, climb-y person, as far back as I can remember - even during my short-lived-but-oh-so-intense basketball phase of youth, I was most complimented for my "mad ups" - suburban white boy slang (and probably beyond) for jumping well.
 
@@ -22,7 +22,7 @@ Doing things you're naturally good at is such a precious gift - you're able to f
 - Coding - I like small, bounded systems. People pay me money to play with them for capitalism.
 - Arranging? Composing? A limited but real number of people have told me I have some ability here, but this is something I need to work at much more to really figure out.
 
-![Canyoneering in Utah!](/img/do-the-things-youre-good-at/canyoneering.png)
+![Canyoneering in Utah!](/img/blog/do-the-things-youre-good-at/canyoneering.png)
 
 All this, by the way, stems from the fact that I tried out canyoneering in Utah - more on my Utah trip in a subsequent post. I absolutely LOVED it, and felt aptitude, fearlessness, and joy flooding through me the entire time. Feeling the strength in my body, the focus it brought out of me, the grounded flow of feeling fully 100% present - that's what living well feels like. I've felt similar feelings while writing music, while singing in choir, while skiing, while coding. I've very rarely felt it from piano or mandolin, despite how much time I've put in there. I've definitely felt it while drumming. I never really felt it from physics, but I did get a lot of joy from just sheer fascination.
 

@@ -27,7 +27,7 @@ High-level takeaways:
 
 Here's my stuff, brought to you by a motel floor in Panguitch, UT, where my stuff is covering a set of stains that was either wine or blood or both:
 
-![Image of packed items](/img/packing-for-a-year/packed-items.png)
+![Image of packed items](/img/blog/packing-for-a-year/packed-items.png)
 
 ## PACKING
 
