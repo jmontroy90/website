@@ -24,3 +24,8 @@ I also love music. I [make music](https://open.spotify.com/artist/0BMBOhoWARN0rL
   <a href="https://www.linkedin.com/in/jmontroy90/"><img src="/img/icons/linkedin.png" width="40" height="40" style="margin: 0 3px"></a>
   <a href="https://medium.com/@john.montroy"><img src="/img/icons/medium.png" width="40" height="40" style="margin: 0 3px"></a>
 </div>
+
+<br>
+<div style="text-align: center; font-size: 0.8em;">
+  <script async defer src="https://www.recurse-scout.com/loader.js?t=f1dc253385239417433460a0c36173e3"></script>
+</div>
