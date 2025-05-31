@@ -7,12 +7,18 @@ theme = 'hugo-bearblog'
 
 enableRobotsTXT = true
 
+[outputs]
+  home = ['html']
+  section = ['html', 'rss']
+  taxonomy = ['html']
+  term = ['html']
+
 [taxonomies]
   tag = "tags"
 
 [params]
   hideMadeWithLine = true
-  description = "Hugo + Bear = :heart:"
+  description = "john montroy personal website"
 
   # The path to your "favicon". This should be a square (at least 32px x 32px) png-file.
   # Hint: It's good practise to also put a "favicon.ico"-file into your "static"-folder.
@@ -24,10 +30,7 @@ enableRobotsTXT = true
   # https://gohugo.io/templates/internal#open-graph.
   images = ["images/share.png"]
 
-  # Another "title" :-). This one is used as the site_name on the Hugo's internal
-  # opengraph structured data template.
-  # See https://ogp.me/ and https://gohugo.io/templates/internal#open-graph.
-  title = "John Montroy"
+  title = "john montroy"
 
 [permalinks]
   blog = "/:slug/"
@@ -42,6 +45,4 @@ enableRobotsTXT = true
 
 [markup.goldmark.renderer]
   unsafe = true # Allow HTML in md files
-
-  # Disable "Made with Hugo Bear" text
   
