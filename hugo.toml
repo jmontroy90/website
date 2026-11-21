@@ -2,7 +2,7 @@ baseURL = 'https://johnmontroy.com'
 languageCode = 'en-us'
 title = 'John Montroy'
 author = "John Montroy"
-copyright = "Copyright © 2025, John Montroy."
+copyright = "Copyright © 2026, John Montroy."
 theme = 'hugo-bearblog'
 
 enableRobotsTXT = true
